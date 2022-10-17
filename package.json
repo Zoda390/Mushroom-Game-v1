@@ -12,6 +12,7 @@
   },
   "author": "Zoda390",
   "license": "ISC",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/Zoda390/Mushroom-Game-v1/issues"
   },
