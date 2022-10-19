@@ -36,7 +36,7 @@ function setup(){
             tile_map[data.y][data.x][data.z] = data.to;
         })
 
-        channel.emit('join', {x: 0, y: 0, z: 2, id: channel.id})
+        channel.emit('join', {x: 0, y: 0, z: 5, id: channel.id})
     })
 
     createCanvas(tileSize*30, tileSize*14);
