@@ -89,7 +89,7 @@ var move_fly_up_button = 81; //q
 var move_fly_down_button = 69; //e
 var run_button = 16; //shift
 var lastmoveMilli = 0;
-var move_wait = 100;
+var move_wait = 120;
 var run_wait = 40;
 function takeInput(){
     if (keyIsDown(move_right_button) && player.x != tile_map[0].length-1) {
