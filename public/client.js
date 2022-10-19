@@ -89,10 +89,12 @@ var move_fly_up_button = 81; //q
 var move_fly_down_button = 69; //e
 var run_button = 16; //shift
 var lastmoveMilli = 0;
+var lastbuildMilli = 0;
+var build_wait = 100;
 var move_wait = 120;
 var run_wait = 40;
 function takeInput(){
-    if (keyIsDown(move_right_button) && player.x != tile_map[0].length-1) {
+    if (keyIsDown(move_right_button) && player.x != tile_map[0].length-1 && tile_map[player.y][player.x+1][player.z] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.x += 1;
@@ -100,7 +102,7 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
-    if (keyIsDown(move_left_button) && player.x != 0) {
+    if (keyIsDown(move_left_button) && player.x != 0 && tile_map[player.y][player.x-1][player.z] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.x -= 1;
@@ -108,7 +110,7 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
-    if (keyIsDown(move_up_button) && player.y != 0) {
+    if (keyIsDown(move_up_button) && player.y != 0 && tile_map[player.y-1][player.x][player.z] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.y -= 1;
@@ -116,7 +118,7 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
-    if (keyIsDown(move_down_button) && player.y != tile_map.length-1) {
+    if (keyIsDown(move_down_button) && player.y != tile_map.length-1 && tile_map[player.y+1][player.x][player.z] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.y += 1;
@@ -124,7 +126,7 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
-    if (keyIsDown(move_fly_up_button) && player.z != 1) {
+    if (keyIsDown(move_fly_up_button) && player.z != 1 && tile_map[player.y][player.x][player.z-1] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.z -= 1;
@@ -132,12 +134,25 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
-    if (keyIsDown(move_fly_down_button) && player.z != tile_map[0][0].length-1) {
+    if (keyIsDown(move_fly_down_button) && player.z != tile_map[0][0].length-1 && tile_map[player.y][player.x][player.z+1] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
             player.z += 1;
             channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 4});
             lastmoveMilli = millis();
         }
+    }
+}
+
+function mouseReleased() {
+    if(millis() - lastbuildMilli > build_wait){
+        let select_tile = {x: player.x, y: player.y, z: player.z};
+        if(mouseButton == LEFT){ //mine
+            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: 0});
+        }
+        else{  //build
+    
+        }
+        lastbuildMilli = millis();
     }
 }
