@@ -33,7 +33,7 @@ io.onConnection(channel => {
     channel.onDisconnect(() => {
         console.log(`${channel.id} got disconnected`);
     })
-
+    
     channel.on('join', data => {
         tile_map[data.y][data.x][data.z] = 4;
         io.room(channel.roomId).emit('give_world', tile_map);

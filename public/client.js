@@ -1,7 +1,7 @@
 var channel;
 var tile_map;
 var tileSize = 64;
-var player = {x: 0, y: 0, z: 5, id: 0};
+var player = {x: 0, y: 0, z: 5, hand: 1, id: 0};
 
 var img_map = [];
 function preload(){
@@ -11,16 +11,23 @@ function preload(){
     img_map.push(loadImage("imgs/water-v1.png"));
     img_map.push(loadImage("imgs/player-v1.png"));
     img_map.push(loadImage("imgs/player2-v1.png"));
+    img_map.push(loadImage("imgs/wood-v1.png"));
 }
 
 function setup(){
-    channel = geckos({ port: 3000 })
+    for (let element of document.getElementsByClassName("p5Canvas")) {
+        element.addEventListener("contextmenu", (e) => e.preventDefault());
+    }
+
+    channel = geckos({ port: 3000 });
 
     channel.onConnect(error => {
         if (error) {
             console.error(error.message)
             return
         }
+
+        channel.emit('join', {x: 0, y: 0, z: 5, id: channel.id});
 
         channel.on('give_world', data => {
             tile_map = data;
@@ -35,8 +42,6 @@ function setup(){
         channel.on('change', data => {
             tile_map[data.y][data.x][data.z] = data.to;
         })
-
-        channel.emit('join', {x: 0, y: 0, z: 5, id: channel.id})
     })
 
     createCanvas(tileSize*30, tileSize*14);
@@ -54,6 +59,7 @@ function draw(){
                     if(tile_map[y][x][z] != 0){
                         if(tile_map[y][x][z] === 4){
                             fill(0, 70);
+                            stroke(0);
                             let shadowZ = 0;
                             for(let z2 = 0; z2 < tile_map[y][x].length; z2++){
                                 if(tile_map[y][x][z2] != 0 && tile_map[y][x][z2] != 4){
@@ -72,13 +78,19 @@ function draw(){
                             image(img_map[(tile_map[y][x][z])], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
                         }
                     }
+                    if(x == (player.x + floor(mouseX/tileSize) - 15) && y == (player.y + floor(mouseY/tileSize) - 5) && z == player.z-1){
+                        fill(255, 10);
+                        stroke(255, 200);
+                        rect((player.x + floor(mouseX/tileSize) - 15)*tileSize, (player.y + floor((mouseY/tileSize)) - 5 - (player.z-1)/2)*tileSize, tileSize, tileSize);
+                    }
                 }
             }
         }
         pop();
-    }
 
-    takeInput();
+
+        takeInput();
+    }
 }
 
 var move_right_button = 68; //d
@@ -93,6 +105,10 @@ var lastbuildMilli = 0;
 var build_wait = 100;
 var move_wait = 120;
 var run_wait = 40;
+var slot1_button = 49;
+var slot2_button = 50;
+var slot3_button = 51;
+var slot4_button = 52;
 function takeInput(){
     if (keyIsDown(move_right_button) && player.x != tile_map[0].length-1 && tile_map[player.y][player.x+1][player.z] === 0) {
         if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
@@ -142,16 +158,27 @@ function takeInput(){
             lastmoveMilli = millis();
         }
     }
+    if (keyIsDown(slot1_button)){
+        player.hand = 1;
+    }
+    if (keyIsDown(slot2_button)){
+        player.hand = 2;
+    }
+    if (keyIsDown(slot3_button)){
+        player.hand = 3;
+    }
+    if (keyIsDown(slot4_button)){
+        player.hand = 6;
+    }
 }
 
 function mouseReleased() {
-    if(millis() - lastbuildMilli > build_wait){
-        let select_tile = {x: player.x, y: player.y, z: player.z};
+    if(millis() - lastbuildMilli > build_wait && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined){
         if(mouseButton == LEFT){ //mine
             channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: 0});
         }
         else{  //build
-    
+            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: player.hand});
         }
         lastbuildMilli = millis();
     }
