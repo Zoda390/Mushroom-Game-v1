@@ -50,7 +50,7 @@ function setup(){
 function draw(){
     background(139, 176, 173);
     if(tile_map != undefined){
-        translate((-player.x*tileSize)+(tileSize*15), (-player.y*tileSize)+(tileSize*7));
+        translate((-player.x*tileSize)+(tileSize*15), (-player.y*tileSize)+(player.z*(tileSize/2))+(tileSize*7));
         push();
         for(let y = 0; y < tile_map.length; y++){
             for(let x = 0; x < tile_map[y].length; x++){
