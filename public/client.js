@@ -2,6 +2,7 @@ var channel;
 var tile_map;
 var tileSize = 64;
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0};
+var outlineList = [];
 
 var img_map = [];
 function preload(){
@@ -12,6 +13,8 @@ function preload(){
     img_map.push(loadImage("imgs/player-v1.png"));
     img_map.push(loadImage("imgs/player2-v1.png"));
     img_map.push(loadImage("imgs/wood-v1.png"));
+    img_map.push(loadImage("imgs/player2Outline-v1.png"));
+    img_map.push(loadImage("imgs/playerOutline-v1.png"));
 }
 
 function setup(){
@@ -51,6 +54,7 @@ function draw(){
     background(139, 176, 173);
     if(tile_map != undefined){
         translate((-player.x*tileSize)+(tileSize*15), (-player.y*tileSize)+(player.z*(tileSize/2))+(tileSize*7));
+        outlineList = [];
         push();
         for(let y = 0; y < tile_map.length; y++){
             for(let x = 0; x < tile_map[y].length; x++){
@@ -73,6 +77,15 @@ function draw(){
                             else{
                                 image(img_map[(tile_map[y][x][z])+1], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
                             }
+                            let OutlineBool = false;
+                            for(let i = z+1; i < tile_map[y][x].length; i++){
+                                if(tile_map[y][x][i] !== 0){
+                                    OutlineBool = true;
+                                }
+                            }
+                            if(OutlineBool){
+                                outlineList.push({x: x, y: y, z: z, img_num: (player.x === x && player.y === y && player.z === z)? 8:7});
+                            }
                         }
                         else{
                             image(img_map[(tile_map[y][x][z])], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
@@ -85,6 +98,9 @@ function draw(){
                     }
                 }
             }
+        }
+        for(let i = 0; i < outlineList.length; i++){
+            image(img_map[outlineList[i].img_num], (outlineList[i].x*tileSize), (outlineList[i].y*tileSize) - (outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
         }
         pop();
 
@@ -173,7 +189,7 @@ function takeInput(){
 }
 
 function mouseReleased() {
-    if(millis() - lastbuildMilli > build_wait && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined){
+    if(millis() - lastbuildMilli > build_wait && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== 4){
         if(mouseButton == LEFT){ //mine
             channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: 0});
         }
