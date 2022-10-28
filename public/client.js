@@ -91,10 +91,10 @@ function draw(){
                             image(img_map[(tile_map[y][x][z])], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
                         }
                     }
-                    if(x == (player.x + floor(mouseX/tileSize) - 15) && y == (player.y + floor(mouseY/tileSize) - 5) && z == player.z-1){
+                    if(x == (player.x + floor(mouseX/tileSize) - 15) && y == (player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)) && z == player.z-1){
                         fill(255, 10);
                         stroke(255, 200);
-                        rect((player.x + floor(mouseX/tileSize) - 15)*tileSize, (player.y + floor((mouseY/tileSize)) - 5 - (player.z-1)/2)*tileSize, tileSize, tileSize);
+                        rect((player.x + floor(mouseX/tileSize) - 15)*tileSize, (player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0) - (player.z-1)/2)*tileSize, tileSize, tileSize);
                     }
                 }
             }
@@ -189,12 +189,12 @@ function takeInput(){
 }
 
 function mouseReleased() {
-    if(millis() - lastbuildMilli > build_wait && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined && tile_map[player.y + floor(mouseY/tileSize) - 5][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== 4){
+    if(millis() - lastbuildMilli > build_wait && tile_map[player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined && tile_map[player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== 4){
         if(mouseButton == LEFT){ //mine
-            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: 0});
+            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z: player.z - 1, to: 0});
         }
         else{  //build
-            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor(mouseY/tileSize) - 5, z: player.z - 1, to: player.hand});
+            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z: player.z - 1, to: player.hand});
         }
         lastbuildMilli = millis();
     }
