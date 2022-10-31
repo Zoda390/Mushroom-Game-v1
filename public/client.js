@@ -12,7 +12,7 @@ function preload(){
     img_map.push(loadImage("imgs/water-v1.png"));
     img_map.push(loadImage("imgs/player-v1.png"));
     img_map.push(loadImage("imgs/player2-v1.png"));
-    img_map.push(loadImage("imgs/wood-v1.png"));
+    img_map.push(loadImage("imgs/player-v1.png"));
     img_map.push(loadImage("imgs/player2Outline-v1.png"));
     img_map.push(loadImage("imgs/playerOutline-v1.png"));
 }

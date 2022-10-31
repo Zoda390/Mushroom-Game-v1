@@ -1,5 +1,21 @@
 import geckos from '@geckos.io/server'
 import express from 'express'
+import fs from 'fs'
+
+// Asynchronous read
+fs.readFile('input.txt', function (err, data) {
+   if (err) {
+      return console.error(err);
+   }
+   console.log("Asynchronous read: " + data.toString());
+});
+
+fs.open('map.txt', 'w', function(err, fd) {
+    if (err) {
+       return console.error(err);
+    }
+    console.log("File opened successfully!");
+ });
 
 const port = 3000;
 const app = express()
@@ -10,6 +26,30 @@ io.addServer(server)
 
 app.use(express.static("public"));
 console.log("My server is running on port " + port);
+
+function find_in_array(input, arr){
+    for(let i = 0; i < arr.length; i++){
+        if(input === arr[i]){
+            return i;
+        }
+    }
+}
+
+var tile_type_map = ['solid', 'facing', 'entity', 'liquid'];
+var tile_name_map = ['stone', 'grass', 'water', 'player', 'wood'];
+class ServerTile{
+    constructor(type, name){
+        this.type = find_in_array(type, tile_type_map);
+        this.name = find_in_array(name, tile_name_map);
+    }
+
+    toText(){
+        return this.type + '.' + this.name;
+    }
+}
+
+var tile1 = new ServerTile('liquid', 'water');
+console.log(tile1.toText());
 
 var tile_map = [];
 for(let y = 0; y < 20; y++){
