@@ -25,6 +25,23 @@ class ClientTile{
     }
 }
 
+class ClientTileEntity extends ClientTile{
+    constructor(type, name, x, y, z, team, facing=0){
+        super(type, name, x, y, z);
+        this.team = team;
+        this.facing = facing;
+        this.inv = [];
+    }
+
+    totxt(){
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.team + '.' + this.facing + '.[]';
+    }
+
+    render(){
+        image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+    }
+}
+
 class ClientMap{
     constructor(name, seed, ver){
         this.name = name; //name of map
@@ -67,88 +84,6 @@ class ClientMap{
         }
         temp += "s:" + this.seed + " v:" + this.ver;
         return temp;
-    }
-
-    fromtxt(filepath){
-        this.name = filepath.split('.')[0];
-        let temp_tile_map = [];
-        //let data = fs.readFileSync(filepath).toString();
-        let lastz = 0;
-        for(let z = 0; z < data.length; z++){
-            if((data[z]+data[z+1]+data[z+2]) === "~~~"){
-                let temp = ""
-                for(let j = lastz; j < z-1; j++){
-                    temp += data[j];
-                }
-                temp_tile_map.push(temp);
-                lastz = z + 4;
-            }
-        }
-        let temp_sv = "";
-        for(let i = lastz; i < data.length; i++){
-            temp_sv += data[i];
-        }
-        temp_sv = temp_sv.split(" ");
-        this.seed = parseInt(temp_sv[0].split(":")[1]);
-        this.ver = parseFloat(temp_sv[1].split(":")[1]);
-        temp_tile_map.reverse();
-        let ycount = 0;
-        for(let z = 0; z < temp_tile_map.length; z++){
-            let data = temp_tile_map[z];
-            temp_tile_map[z] = [];
-            ycount = 0;
-            let lasty = 0;
-            for(let y = 0; y < data.length; y++){
-                if((data[y]+data[y+1]) === "~~"){
-                    let temp = ""
-                    for(let j = lasty; j < y-1; j++){
-                        temp += data[j];
-                    }
-                    temp_tile_map[z].push(temp);
-                    lasty = y + 3;
-                    ycount ++;
-                }
-            }
-        }
-        let xcount = 0;
-        for(let z = 0; z < temp_tile_map.length; z++){
-            for(let y = 0; y < temp_tile_map[z].length; y++){
-                let data = temp_tile_map[z][y];
-                temp_tile_map[z][y] = [];
-                xcount = 0;
-                let lastx = 0;
-                for(let x = 0; x < data.length; x++){
-                    if(data[x] === "~"){
-                        let temp = ""
-                        for(let j = lastx; j < x; j++){
-                            temp += data[j];
-                        }
-                        temp_tile_map[z][y].push(temp);
-                        lastx = x + 1;
-                        xcount ++;
-                    }
-                }
-            }
-        }
-        this.tile_map = [];
-        for(let y = 0; y < ycount; y++){
-            this.tile_map[y] = [];
-            for(let x = 0; x < xcount; x++){
-                this.tile_map[y][x] = [];
-                for(let z = 0; z < temp_tile_map.length; z++){
-                    if(temp_tile_map[z][y][x] !== "0"){
-                        let tempArr = temp_tile_map[z][y][x].split('.');
-                        for(let i = 0; i < tempArr.length; i++){
-                            tempArr[i] = parseInt(tempArr[i]);
-                        }
-                        this.tile_map[y][x][z] = new ClientTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]]);
-                    }
-                    else{
-                        this.tile_map[y][x][z] = 0;
-                    }
-                }
-            }
-        }
     }
 
     fromStr(data){
@@ -218,6 +153,7 @@ class ClientMap{
                 for(let z = 0; z < temp_tile_map.length; z++){
                     if(temp_tile_map[z][y][x] !== "0"){
                         let tempArr = temp_tile_map[z][y][x].split('.');
+                        console.log(tempArr);
                         for(let i = 0; i < tempArr.length; i++){
                             tempArr[i] = parseInt(tempArr[i]);
                         }

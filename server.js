@@ -126,6 +126,7 @@ class ServerMap{
                 let lastx = 0;
                 for(let x = 0; x < data.length; x++){
                     if(data[x] === "~"){
+                        //.[1.1≈] for items in tiles
                         let temp = ""
                         for(let j = lastx; j < x; j++){
                             temp += data[j];
@@ -165,7 +166,7 @@ class ServerMap{
 
 var map1 = new ServerMap('unUpdated', 0, 0);
 map1.fromtxt("map.txt");
-map1.save()
+map1.save();
 
 io.onConnection(channel => {
     channel.onDisconnect(() => {

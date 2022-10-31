@@ -9,7 +9,7 @@ function preload(){
     img_map.push([loadImage("imgs/stone-v1.png")]);
     img_map.push([loadImage("imgs/grass-v1.png")]);
     img_map.push([loadImage("imgs/water-v1.png")]);
-    img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/player2Outline-v1.png")]);
+    img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player(left)-v1.png"), loadImage("imgs/player(back)-v1.png"), loadImage("imgs/player(right)-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/playerOutline(left)-v1.png"), loadImage("imgs/playerOutline(back)-v1.png"), loadImage("imgs/playerOutline(right)-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/player2(left)-v1.png"), loadImage("imgs/player2(back)-v1.png"), loadImage("imgs/player2(right)-v1.png"), loadImage("imgs/player2Outline-v1.png"), loadImage("imgs/player2Outline(left)-v1.png"), loadImage("imgs/player2Outline(back)-v1.png"), loadImage("imgs/player2Outline(right)-v1.png")]);
     img_map.push([loadImage("imgs/wood-v1.png")]);
 }
 
