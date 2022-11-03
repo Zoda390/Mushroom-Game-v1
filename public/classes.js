@@ -153,7 +153,6 @@ class ClientMap{
                 for(let z = 0; z < temp_tile_map.length; z++){
                     if(temp_tile_map[z][y][x] !== "0"){
                         let tempArr = temp_tile_map[z][y][x].split('.');
-                        console.log(tempArr);
                         for(let i = 0; i < tempArr.length; i++){
                             tempArr[i] = parseInt(tempArr[i]);
                         }
@@ -194,6 +193,59 @@ class ClientMap{
             image(img_map[outlineList[i].img_num], (outlineList[i].x*tileSize), (outlineList[i].y*tileSize) - (outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
         }
         pop();
+    }
+}
+
+function place(mode, tileID, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+    if(mode == "s"){
+        //take item from inv
+    }
+
+    if(tileID == 0 && mode != "s"){
+        channel.emit('change', {x: x, y: y, z: z, to: 0});
+    }
+    else{
+        if(tileID == 0){
+            console.log("place 0, doesnt work in survival\nPlease use mine");
+        }
+        else{
+            channel.emit('change', {x: x, y: y, z: z, to: {type: 1, name: tileID}});
+        }
+    }
+}
+
+function mine(mode, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+    if(mode == "s"){
+        channel.emit('change', {x: x, y: y, z: z, to: 0});
+        //add item to inv
+    }
+    else{
+        console.log("mine is for survival only\nPlease use place 0");
+    }
+}
+
+function change(prop, to, map, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+    let props = Object.keys(map.tile_map[y][x][z]);
+    let i = find_in_array(prop, props);
+    if(i != undefined){
+        map.tile_map[y][x][z][prop] = to;
+    }
+}
+
+function fillTiles(tileID, keep, map, x1, y1, z1, x2, y2, z2){
+    for(let y = y1; y < y2; y++){
+        for(let x = x1; x < x2; x++){
+            for(let z = z1; z < z2; z++){
+                if(keep){
+                    if(map.tile_map[y][x][z] != 0){
+                        place("L", tileID, x, y, z);
+                    }
+                }
+                else{
+                    place("L", tileID, x, y, z);
+                }
+            }
+        }
     }
 }
 
