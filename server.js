@@ -20,8 +20,27 @@ function find_in_array(input, arr){
     }
 }
 
+//open the json for tiles
+var json_tiles = fs.readFileSync("tiles.json");
+json_tiles = JSON.parse(json_tiles);
+var tile_name_map = [0];
+var tile_type_map = [0];
+
+//add each tile in json to map arrays
+for(let i = 0; i < json_tiles.length; i++){
+    tile_name_map.push(json_tiles[i]['name'])
+    tile_type_map.push(json_tiles[i]['type'])
+}
+
+//remove duplicates
+tile_name_map = [...new Set(tile_name_map)];
+tile_type_map = [...new Set(tile_type_map)];
+
+/*
 var tile_type_map = [0, 'solid', 'facing', 'entity', 'liquid'];
 var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood'];
+*/
+
 class ServerTile{
     constructor(type, name){
         this.type = find_in_array(type, tile_type_map);
