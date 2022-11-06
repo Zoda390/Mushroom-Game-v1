@@ -6,7 +6,7 @@ function find_in_array(input, arr){
     }
 }
 
-var tile_type_map = [0, 'solid', 'facing', 'entity', 'liquid'];
+var tile_type_map = [0, 'solid', 'liquid', 'entity', 'facing'];
 var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood'];
 class ClientTile{
     constructor(type, name, x, y, z){
@@ -25,11 +25,16 @@ class ClientTile{
     }
 }
 
-class ClientTileEntity extends ClientTile{
-    constructor(type, name, x, y, z, team, facing=0){
+class ClientTilePlayer extends ClientTile{
+    constructor(type, name, x, y, z, team, facing){
         super(type, name, x, y, z);
         this.team = team;
         this.facing = facing;
+        this.lastmoveMilli = 0;
+        this.runing = false;
+        this.walk_wait = 120;
+        this.run_wait = 40;
+        this.id = 0;
         this.inv = [];
     }
 
@@ -39,6 +44,43 @@ class ClientTileEntity extends ClientTile{
 
     render(){
         image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+    }
+
+    move(d, id){
+        if (millis() - this.lastmoveMilli > this.walk_wait && id == this.id) {
+            channel.emit('change', {x: this.pos.x, y: this.pos.y, z: this.pos.z, to: 0});
+            if(d == 0){
+                this.facing = 0;
+                this.pos.y ++;
+                player.y++;
+            }
+            else if(d == 1){
+                this.facing = 1;
+                this.pos.x --;
+                player.x--;
+            }
+            else if(d == 2){
+                this.facing = 2;
+                this.pos.y --;
+                player.y--;
+            }
+            else if(d == 3){
+                this.facing = 3;
+                this.pos.x ++;
+                player.x++;
+            }
+            else if(d == 4){
+                this.z --;
+                player.z++;
+            }
+            else if(d == 5){
+                this.z ++;
+                player.z--;
+            }
+            this.lastmoveMilli = millis();
+            console.log(this.type + " " + this.name);
+            channel.emit('change', {x: this.pos.x, y: this.pos.y, z: this.pos.z, to: {type: this.type, name: this.name, facing: this.facing, lastmoveMilli: this.lastmoveMilli, id: this.id}});
+        }
     }
 }
 
@@ -152,11 +194,26 @@ class ClientMap{
                 this.tile_map[y][x] = [];
                 for(let z = 0; z < temp_tile_map.length; z++){
                     if(temp_tile_map[z][y][x] !== "0"){
+                        console.log(temp_tile_map[z][y][x]);
                         let tempArr = temp_tile_map[z][y][x].split('.');
                         for(let i = 0; i < tempArr.length; i++){
                             tempArr[i] = parseInt(tempArr[i]);
                         }
-                        this.tile_map[y][x][z] = new ClientTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]], x, y, z);
+                        if(tempArr[0] == 1){
+                            this.tile_map[y][x][z] = new ClientTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]], x, y, z);
+                        }
+                        else if(tempArr[0] == 2){
+                            this.tile_map[y][x][z] = new ClientTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]], x, y, z);
+                        }
+                        else if(tempArr[0] == 3){
+                            this.tile_map[y][x][z] = new ClientTilePlayer("entity", tile_name_map[tempArr[1]], x, y, z, 0, 0);
+                        }
+                        else if(tempArr[0] == 4){
+                            this.tile_map[y][x][z] = new ClientTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]], x, y, z);
+                        }
+                        else{
+                            console.log("tile type not found server side " + tile_type_map[tempArr[0]]);
+                        }
                     }
                     else{
                         this.tile_map[y][x][z] = 0;

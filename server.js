@@ -81,6 +81,9 @@ class ServerMap{
             for(let y = 0; y < this.tile_map.length; y++){
                 for(let x = 0; x < this.tile_map[y].length; x++){
                     if(this.tile_map[y][x][z] !== 0){
+                        if(this.tile_map[y][x][z].type == 3){
+                            console.log(this.tile_map[y][x][z].totxt())
+                        }
                         temp += this.tile_map[y][x][z].totxt() + "~";
                     }
                     else{
@@ -194,6 +197,7 @@ io.onConnection(channel => {
     
     channel.on('join', data => {
         map1.tile_map[data.y][data.x][data.z] = new ServerTile('entity', 'player');
+        console.log(map1.tile_map[data.y][data.x][data.z]);
         io.room(channel.roomId).emit('give_world', {name: map1.name, str: map1.totxt()});
         io.room(channel.roomId).emit('update_id', data.id);
     })
@@ -201,10 +205,12 @@ io.onConnection(channel => {
     channel.on('change', data => {
         if(data.to != 0){
             map1.tile_map[data.y][data.x][data.z] = new ServerTile(data.to.type, data.to.name);
+            console.log(map1.tile_map[data.y][data.x][data.z]);
         }
         else{
             map1.tile_map[data.y][data.x][data.z] = 0;
         }
+        console.log(data.to);
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: data.to});
     })
 })

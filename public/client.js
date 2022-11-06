@@ -1,3 +1,5 @@
+
+
 var channel;
 var map1;
 var tileSize = 64;
@@ -29,19 +31,41 @@ function setup(){
         channel.emit('join', {x: 0, y: 0, z: 5, id: channel.id});
 
         channel.on('give_world', data => {
-            map1 = new ClientMap(data.name, 0, 0);
-            map1.fromStr(data.str);
+            if(map1 == undefined){
+                map1 = new ClientMap(data.name, 0, 0);
+                map1.fromStr(data.str);
+            }
+            else{
+                console.log(map1);
+            }
         })
 
         channel.on('update_id', data => {
             if(player.id === 0){
                 player.id = data;
+                map1.tile_map[player.y][player.x][player.z].id = data;
             }
         })
 
         channel.on('change', data => {
             if(data.to !== 0){
-                map1.tile_map[data.y][data.x][data.z] = new ClientTile(tile_type_map[data.to.type], tile_name_map[data.to.name], data.x, data.y, data.z);
+                if(data.to.type == 1){
+                    map1.tile_map[data.y][data.x][data.z] = new ClientTile(tile_type_map[data.to.type], tile_name_map[data.to.name], data.x, data.y, data.z);
+                }
+                else if(data.to.type == 2){
+                    map1.tile_map[data.y][data.x][data.z] = new ClientTile(tile_type_map[data.to.type], tile_name_map[data.to.name], data.x, data.y, data.z);
+                }
+                else if(data.to.type == 3){
+                    map1.tile_map[data.y][data.x][data.z] = new ClientTilePlayer("entity", "player", data.x, data.y, data.z, 0, data.to.facing);
+                    map1.tile_map[data.y][data.x][data.z].lastmoveMilli = data.to.lastmoveMilli;
+                    map1.tile_map[data.y][data.x][data.z].id = data.to.id;
+                }
+                else if(data.to.type == 4){
+                    map1.tile_map[data.y][data.x][data.z] = new ClientTile(tile_type_map[data.to.type], tile_name_map[data.to.name], data.x, data.y, data.z);
+                }
+                else{
+                    console.log("tile type not found server side " + data.to.type);
+                }
             }
             else{
                 map1.tile_map[data.y][data.x][data.z] = 0;
@@ -50,12 +74,12 @@ function setup(){
     })
 
     createCanvas(tileSize*30, tileSize*14);
-    map1 = new ClientMap('unUpdated', 0, 0);
+    
 }
 
 function draw(){
     background(139, 176, 173);
-    if(map1.tile_map != undefined){
+    if(map1 != undefined){
         map1.render();
         takeInput();
     }
@@ -78,53 +102,23 @@ var slot2_button = 50;
 var slot3_button = 51;
 var slot4_button = 52;
 function takeInput(){
-    if (keyIsDown(move_right_button) && player.x != map1.tile_map[0].length-1 && map1.tile_map[player.y][player.x+1][player.z] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.x += 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_right_button) && player.x != map1.tile_map[0].length-1 && map1.tile_map[player.y][player.x+1][player.z] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(3, player.id);
     }
-    if (keyIsDown(move_left_button) && player.x != 0 && map1.tile_map[player.y][player.x-1][player.z] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.x -= 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_left_button) && player.x != 0 && map1.tile_map[player.y][player.x-1][player.z] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(1, player.id);
     }
-    if (keyIsDown(move_up_button) && player.y != 0 && map1.tile_map[player.y-1][player.x][player.z] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.y -= 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_up_button) && player.y != 0 && map1.tile_map[player.y-1][player.x][player.z] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(2, player.id);
     }
-    if (keyIsDown(move_down_button) && player.y != map1.tile_map.length-1 && map1.tile_map[player.y+1][player.x][player.z] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.y += 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_down_button) && player.y != map1.tile_map.length-1 && map1.tile_map[player.y+1][player.x][player.z] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(0, player.id);
     }
-    if (keyIsDown(move_fly_up_button) && player.z != 1 && map1.tile_map[player.y][player.x][player.z-1] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.z -= 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_fly_up_button) && player.z != 1 && map1.tile_map[player.y][player.x][player.z-1] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(4, player.id);
     }
-    if (keyIsDown(move_fly_down_button) && player.z != map1.tile_map[0][0].length-1 && map1.tile_map[player.y][player.x][player.z+1] === 0) {
-        if (millis() - lastmoveMilli > ((keyIsDown(run_button)) ? run_wait:move_wait)) {
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
-            player.z += 1;
-            channel.emit('change', {x: player.x, y: player.y, z: player.z, to: {type: 3, name: 4}});
-            lastmoveMilli = millis();
-        }
+    if (keyIsDown(move_fly_down_button) && player.z != map1.tile_map[0][0].length-1 && map1.tile_map[player.y][player.x][player.z+1] === 0 && map1.tile_map[player.y][player.x][player.z].type == "entity") {
+        map1.tile_map[player.y][player.x][player.z].move(5, player.id);
     }
     if (keyIsDown(slot1_button)){
         player.hand = 1;
