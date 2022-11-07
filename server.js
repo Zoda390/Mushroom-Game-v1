@@ -204,13 +204,15 @@ io.onConnection(channel => {
 
     channel.on('change', data => {
         if(data.to != 0){
-            map1.tile_map[data.y][data.x][data.z] = new ServerTile(data.to.type, data.to.name);
-            console.log(map1.tile_map[data.y][data.x][data.z]);
+            let tempArr = data.to.split('.');
+            for(let i = 0; i < tempArr.length; i++){
+                tempArr[i] = parseInt(tempArr[i]);
+            }
+            map1.tile_map[data.y][data.x][data.z] = new ServerTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]]);
         }
         else{
             map1.tile_map[data.y][data.x][data.z] = 0;
         }
-        console.log(data.to);
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: data.to});
     })
 })

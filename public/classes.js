@@ -84,8 +84,6 @@ class ClientTilePlayer extends ClientTile{
     }
 }
 
-//!convert all change messages to be map.txt format (aka use .totxt());
-
 class ClientMap{
     constructor(name, seed, ver){
         this.name = name; //name of map
@@ -283,7 +281,7 @@ function mine(mode, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor
     }
 }
 
-function change(prop, to, map, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+function change_prop(prop, to, map, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
     let props = Object.keys(map.tile_map[y][x][z]);
     let i = find_in_array(prop, props);
     if(i != undefined){
