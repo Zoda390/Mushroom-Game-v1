@@ -84,6 +84,8 @@ class ClientTilePlayer extends ClientTile{
     }
 }
 
+//!convert all change messages to be map.txt format (aka use .totxt());
+
 class ClientMap{
     constructor(name, seed, ver){
         this.name = name; //name of map
