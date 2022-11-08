@@ -97,12 +97,12 @@ class ClientTilePlayer extends ClientTile{ //an entity tile
                 player.x++;
             }
             else if(d == 4){
-                this.z --;
-                player.z++;
+                this.pos.z ++;
+                player.z ++;
             }
             else if(d == 5){
-                this.z ++;
-                player.z--;
+                this.pos.z --;
+                player.z --;
             }
             this.move_counter = 0;
             channel.emit('change', {x: this.pos.x, y: this.pos.y, z: this.pos.z, to: this.toStr()});
@@ -267,7 +267,7 @@ class ClientMap{
             }
         }
     }
-
+    
     save(){ //save the map to a file
         //fs.writeFileSync((this.name + ".txt"), this.totxt());
     }

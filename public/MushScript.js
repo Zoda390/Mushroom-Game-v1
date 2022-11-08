@@ -188,8 +188,27 @@ function parse(sc){
 //Behind the scene functions
 
 //place a block "place tileID,x,y,z;" or "place tileID;"
-function place(tileID, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+function place(params){
     let mode = "L"; //s for survival, L for level-editing
+
+    let tileID = params[0];
+    let x=player.x + floor(mouseX/tileSize) - 15 
+    let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
+    let z=player.z - 1;
+
+    if(params.length == 4){
+        x = params[1];
+        y = params[2];
+        z = params[3];
+    }
+    else if(params.length == 3){
+        x = params[1];
+        y = params[2];
+    }
+    else if(params.length == 2){
+        console.log("If you give place an x, you need to give it a y.");
+    }
+    
     if(mode == "s"){
         //take item from inv
     }
@@ -208,8 +227,26 @@ function place(tileID, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + fl
 }
 
 //place an air block and add that block to the players inventory "mine x,y,z;" or "mine;"
-function mine(x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+function mine(params){
     let mode = "L"; //s for survival, L for level-editing
+
+    let x=player.x + floor(mouseX/tileSize) - 15 
+    let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
+    let z=player.z - 1;
+
+    if(params.length == 3){
+        x = params[0];
+        y = params[1];
+        z = params[2];
+    }
+    else if(params.length == 2){
+        x = params[0];
+        y = params[1];
+    }
+    else if(params.length == 1){
+        console.log("If you give mine an x, you need to give it a y.");
+    }
+
     if(mode == "s"){
         channel.emit('change', {x: x, y: y, z: z, to: 0});
         //add item to inv
@@ -220,7 +257,27 @@ function mine(x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mous
 }
 
 //change the property of a block "c_prop prop,to,x,y,z;" or "c_prop prop,to;"
-function change_prop(prop, to, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
+function c_prop(params){
+    let prop = params[0];
+    let to = params[1];
+    
+    let x = player.x + floor(mouseX/tileSize) - 15;
+    let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0); 
+    let z = player.z - 1;
+
+    if(params.length == 5){
+        x = params[2];
+        y = params[3];
+        z = params[4];
+    }
+    else if(params.length == 4){
+        x = params[2];
+        y = params[3];
+    }
+    else if(params.length == 3){
+        console.log("If you give c_prop an x, you need to give it a y.");
+    }
+
     let props = Object.keys(cc_map.tile_map[y][x][z]);
     let i = find_in_array(prop, props);
     if(i != undefined){
@@ -229,7 +286,22 @@ function change_prop(prop, to, x=player.x + floor(mouseX/tileSize) - 15, y=playe
 }
 
 //fill an area with 1 tile "fill tileID,keep,x1,y1,z1,x2,y2,z2;"
-function fillTiles(tileID, keep, map, x1, y1, z1, x2, y2, z2){
+function fillTiles(params){
+    if(params.length < 8){
+        console.log("fill requries 8 properties.");
+    }
+
+    let tileID = params[0];
+    let keep = params[1];
+    let x1 = params[2];
+    let y1 = params[3];
+    let z1 = params[4];
+    let x2 = params[5];
+    let y2 = params[6];
+    let z2 = params[7];
+
+    let map = cc_map;
+    
     for(let y = y1; y < y2; y++){
         for(let x = x1; x < x2; x++){
             for(let z = z1; z < z2; z++){

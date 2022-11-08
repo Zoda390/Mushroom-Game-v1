@@ -124,10 +124,10 @@ function takeInput(){
         cc_map.tile_map[player.y][player.x][player.z].move(0, channel.id);
     }
     if (keyIsDown(move_fly_up_button) && player.z != 1 && cc_map.tile_map[player.y][player.x][player.z-1] === 0 && cc_map.tile_map[player.y][player.x][player.z].type == "entity") {
-        cc_map.tile_map[player.y][player.x][player.z].move(4, channel.id);
+        cc_map.tile_map[player.y][player.x][player.z].move(5, channel.id);
     }
     if (keyIsDown(move_fly_down_button) && player.z != cc_map.tile_map[0][0].length-1 && cc_map.tile_map[player.y][player.x][player.z+1] === 0 && cc_map.tile_map[player.y][player.x][player.z].type == "entity") {
-        cc_map.tile_map[player.y][player.x][player.z].move(5, channel.id);
+        cc_map.tile_map[player.y][player.x][player.z].move(4, channel.id);
     }
     if (keyIsDown(slot1_button)){
         player.hand = 1;
