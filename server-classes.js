@@ -12,11 +12,11 @@ export function find_in_array(input, arr){
 //a solid tile for server end
 export class ServerTile{
     constructor(type, name){
-        this.type = type;
-        this.name = name;
+        this.type = type; //int
+        this.name = name; //int
     }
 
-    totxt(){
+    toStr(){
         return this.type + '.' + this.name;
     }
 }
@@ -31,11 +31,11 @@ export class ServerMap{
             this.tile_map[y] = [];
             for(let x = 0; x < 40; x++){
                 this.tile_map[y][x] = [];
-                this.tile_map[y][x][0] = new ServerTile(1, 1);
-                this.tile_map[y][x][1] = new ServerTile(2, 3);
-                this.tile_map[y][x][2] = new ServerTile(1, 1);
-                this.tile_map[y][x][3] = new ServerTile(1, 2);
-                this.tile_map[y][x][4] = new ServerTile(1, 2);
+                this.tile_map[y][x][0] = new ServerTile(1, 1); //stone
+                this.tile_map[y][x][1] = new ServerTile(2, 3); //water
+                this.tile_map[y][x][2] = new ServerTile(1, 1); //stone
+                this.tile_map[y][x][3] = new ServerTile(1, 2); //grass
+                this.tile_map[y][x][4] = new ServerTile(1, 2); //grass
                 this.tile_map[y][x][5] = 0;
                 this.tile_map[y][x][6] = 0;
                 this.tile_map[y][x][7] = 0;
@@ -45,19 +45,26 @@ export class ServerMap{
         }
     }
 
-    totxt(){
+    totxt(){ //convert the map to txt format
+        //~ for the end of a tile
+        //~~ for the end of a y section
+        //~~~ for the end of a z section
+        //≈ for the end of an item
+        //. to seperate properties
         let temp = "";
         for(let z = this.tile_map[0][0].length-1; z >= 0; z--){
             for(let y = 0; y < this.tile_map.length; y++){
                 for(let x = 0; x < this.tile_map[y].length; x++){
                     if(this.tile_map[y][x][z] !== 0){
+                        /* second player map break test
                         if(this.tile_map[y][x][z].type == 3){
-                            console.log(this.tile_map[y][x][z].totxt())
+                            console.log(this.tile_map[y][x][z].toStr())
                         }
-                        temp += this.tile_map[y][x][z].totxt() + "~";
+                        */
+                        temp += this.tile_map[y][x][z].toStr() + "~";
                     }
                     else{
-                        temp += "0~";
+                        temp += "0~"; 
                     }
                 }
                 temp += " ~~\n";
@@ -68,11 +75,11 @@ export class ServerMap{
         return temp;
     }
 
-    fromtxt(filepath){
-        this.name = filepath.split('.')[0];
+    fromtxt(filepath){ //convert a txt file to a working map
+        this.name = filepath.split('.')[0]; //get the name from the filepath given
         let temp_tile_map = [];
-        let data = fs.readFileSync(filepath).toString();
-        let lastz = 0;
+        let data = fs.readFileSync(filepath).toString(); //open the file
+        let lastz = 0; //hold the index of the last ~~~ you found
         for(let z = 0; z < data.length; z++){
             if((data[z]+data[z+1]+data[z+2]) === "~~~"){
                 let temp = ""
@@ -83,6 +90,7 @@ export class ServerMap{
                 lastz = z + 4;
             }
         }
+        //get the seed and version
         let temp_sv = "";
         for(let i = lastz; i < data.length; i++){
             temp_sv += data[i];
@@ -90,8 +98,11 @@ export class ServerMap{
         temp_sv = temp_sv.split(" ");
         this.seed = parseInt(temp_sv[0].split(":")[1]);
         this.ver = parseFloat(temp_sv[1].split(":")[1]);
+
+        //flip the map cause map.txt is from top to bottom, but tile_map is bottom to top
         temp_tile_map.reverse();
-        let ycount = 0;
+
+        let ycount = 0; //hold the index of the last ~~ you found
         for(let z = 0; z < temp_tile_map.length; z++){
             let data = temp_tile_map[z];
             temp_tile_map[z] = [];
@@ -109,7 +120,8 @@ export class ServerMap{
                 }
             }
         }
-        let xcount = 0;
+
+        let xcount = 0; //hold the index of the last ~ you found
         for(let z = 0; z < temp_tile_map.length; z++){
             for(let y = 0; y < temp_tile_map[z].length; y++){
                 let data = temp_tile_map[z][y];
@@ -130,7 +142,9 @@ export class ServerMap{
                 }
             }
         }
-        this.tile_map = [];
+
+        //fill the current tile_map with the temp_tile_map
+        this.tile_map = []; //empty the current tile_map
         for(let y = 0; y < ycount; y++){
             this.tile_map[y] = [];
             for(let x = 0; x < xcount; x++){
@@ -151,7 +165,7 @@ export class ServerMap{
         }
     }
 
-    save(){
+    save(){ //actually put the txt into a file
         fs.writeFileSync((this.name + ".txt"), this.totxt());
     }
 }
