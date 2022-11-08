@@ -21,6 +21,23 @@ export class ServerTile{
     }
 }
 
+export class ServerTileEntity extends ServerTile{
+    constructor(type, name, team, facing){
+        super(type, name);
+        this.team = team;
+        this.facing = facing; //an int for which direction the entity is facing
+        this.move_counter = 0;
+        this.walk_wait = 10; //frames before you can walk again
+        this.run_wait = 5; //frames before you can run again
+        this.id = 0;
+        this.inv = [];
+    }
+
+    toStr(){
+        return this.type + '.' + this.name + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[]';
+    }
+}
+
 export class ServerMap{
     constructor(name, seed, ver){
         this.name = name; //name of map
@@ -90,6 +107,7 @@ export class ServerMap{
                 lastz = z + 4;
             }
         }
+
         //get the seed and version
         let temp_sv = "";
         for(let i = lastz; i < data.length; i++){
@@ -155,7 +173,25 @@ export class ServerMap{
                         for(let i = 0; i < tempArr.length; i++){
                             tempArr[i] = parseInt(tempArr[i]);
                         }
-                        this.tile_map[y][x][z] = new ServerTile(tempArr[0], tempArr[1]);
+                        
+                        //use the type to create the right tile class
+                        if(tempArr[0] == 1){ //solid
+                            this.tile_map[y][x][z] = new ServerTile(1, tempArr[1]);
+                        }
+                        else if(tempArr[0] == 2){ //liquid
+                            this.tile_map[y][x][z] = new ServerTile(2, tempArr[1]);
+                        }
+                        else if(tempArr[0] == 3){ //entity
+                            this.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
+                            this.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
+                            this.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                        }
+                        else if(tempArr[0] == 4){ //facing
+                            this.tile_map[y][x][z] = new ServerTile(4, tempArr[1]);
+                        }
+                        else{
+                            console.log("tile type not found server side " + tempArr[0]);
+                        }
                     }
                     else{
                         this.tile_map[y][x][z] = 0;

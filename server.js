@@ -1,7 +1,7 @@
 import geckos from '@geckos.io/server'
 import express from 'express'
 import fs from 'fs'
-import {find_in_array, ServerTile, ServerMap} from './server-classes.js'
+import {find_in_array, ServerTile, ServerMap, ServerTileEntity} from './server-classes.js'
 
 //server stuff
 const port = 3000;
@@ -44,29 +44,45 @@ io.onConnection(channel => {
     })
     
     channel.on('join', data => { //client join message
-        console.log(data);
-
-        //add a player to the map
-        map1.tile_map[data.y][data.x][data.z] = new ServerTile('entity', 'player');
-
         //convert the map to a string and send it to the player
-        io.room(channel.roomId).emit('give_world', {name: map1.name, str: map1.totxt()});
+        io.room(channel.roomId).emit('give_world', {str: cs_map.totxt(), name: cs_map.name});
+        
+        //add a player to the map
+        cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), 0, 0);
+        cs_map.tile_map[data.y][data.x][data.z].id = data.id;
+        io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: cs_map.tile_map[data.y][data.x][data.z].toStr()});
     })
 
-    channel.on('change', data => {
+    channel.on('change', data => { //change a block data = {x:int, y:int, z:int, to:str}
         if(data.to != 0){
-            //parse the str from change
+            //parse the str from data.to
             let tempArr = data.to.split('.');
             for(let i = 0; i < tempArr.length; i++){
                 tempArr[i] = parseInt(tempArr[i]);
             }
 
-            //add that tile to the server map
-            map1.tile_map[data.y][data.x][data.z] = new ServerTile(tile_type_map[tempArr[0]], tile_name_map[tempArr[1]]);
+            //use the type to create the right tile class
+            if(tempArr[0] == 1){ //solid
+                cs_map.tile_map[y][x][z] = new ServerTile(1, tempArr[1]);
+            }
+            else if(tempArr[0] == 2){ //liquid
+                cs_map.tile_map[y][x][z] = new ServerTile(2, tempArr[1]);
+            }
+            else if(tempArr[0] == 3){ //entity
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
+                cs_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
+                cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
+            }
+            else if(tempArr[0] == 4){ //facing
+                cs_map.tile_map[y][x][z] = new ServerTile(4, tempArr[1]);
+            }
+            else{
+                console.log("tile type not found server side " + tempArr[0]);
+            }
         }
         else{
             //add a 0 to the server map
-            map1.tile_map[data.y][data.x][data.z] = 0;
+            cs_map.tile_map[data.y][data.x][data.z] = 0;
         }
 
         //send the change out to all clients
