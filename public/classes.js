@@ -276,65 +276,6 @@ class ClientMap{
     }
 }
 
-//place a block "place tileID,x,y,z;" or "place tileID;"
-function place(tileID, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
-    let mode = "L"; //s for survival, L for level-editing
-    if(mode == "s"){
-        //take item from inv
-    }
-
-    if(tileID == 0 && mode != "s"){
-        channel.emit('change', {x: x, y: y, z: z, to: 0});
-    }
-    else{
-        if(tileID == 0){
-            console.log("place 0, doesnt work in survival\nPlease use mine");
-        }
-        else{
-            channel.emit('change', {x: x, y: y, z: z, to: {type: 1, name: tileID}});
-        }
-    }
-}
-
-//place an air block and add that block to the players inventory "mine x,y,z;" or "mine;"
-function mine(x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
-    let mode = "L"; //s for survival, L for level-editing
-    if(mode == "s"){
-        channel.emit('change', {x: x, y: y, z: z, to: 0});
-        //add item to inv
-    }
-    else{
-        console.log("mine is for survival only\nPlease use place 0");
-    }
-}
-
-//change the property of a block "c_prop prop,to,x,y,z;" or "c_prop prop,to;"
-function change_prop(prop, to, x=player.x + floor(mouseX/tileSize) - 15, y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z=player.z - 1){
-    let props = Object.keys(cc_map.tile_map[y][x][z]);
-    let i = find_in_array(prop, props);
-    if(i != undefined){
-        cc_map.tile_map[y][x][z][prop] = to;
-    }
-}
-
-//fill an area with 1 tile "fill tileID,keep,x1,y1,z1,x2,y2,z2;"
-function fillTiles(tileID, keep, map, x1, y1, z1, x2, y2, z2){
-    for(let y = y1; y < y2; y++){
-        for(let x = x1; x < x2; x++){
-            for(let z = z1; z < z2; z++){
-                if(keep){
-                    if(map.tile_map[y][x][z] != 0){
-                        place("L", tileID, x, y, z);
-                    }
-                }
-                else{
-                    place("L", tileID, x, y, z);
-                }
-            }
-        }
-    }
-}
-
 /* Player rendering
 if(tile_map[y][x][z] === 4){
     fill(0, 70);
