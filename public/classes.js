@@ -43,7 +43,30 @@ class ClientTilePlayer extends ClientTile{ //an entity tile
     }
 
     render(){
+        //Render the player shadow
+        fill(0, 70);
+        stroke(0);
+        let shadowZ = 0;
+        for(let z2 = 0; z2 < cc_map.tile_map[this.pos.y][this.pos.x].length; z2++){
+            if(cc_map.tile_map[this.pos.y][this.pos.x][z2] != 0 && cc_map.tile_map[this.pos.y][this.pos.x][z2].type != "entity"){
+                shadowZ = z2;
+            }
+        }
+        circle((this.pos.x*tileSize) + (tileSize/2), (this.pos.y*tileSize) - (shadowZ * tileSize/2) + (tileSize/2), (10-(this.pos.z-shadowZ)) * (tileSize/20));
+
         image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        
+        //deal with player outlines
+        let OutlineBool = false;
+        for(let i = this.pos.z+1; i < cc_map.tile_map[this.pos.y][this.pos.x].length; i++){
+            if(cc_map.tile_map[this.pos.y][this.pos.x][i] !== 0){
+                OutlineBool = true;
+            }
+        }
+        if(OutlineBool){
+            cc_map.outlineList.push({x: this.pos.x, y: this.pos.y, z: this.pos.z, img_num: (this.facing + ((this.team == 1)? 12:4))});
+        }
+
         //incriment move_counter
         if(this.move_counter <= this.walk_wait){
             this.move_counter++;
@@ -109,6 +132,7 @@ class ClientMap{
                 this.tile_map[y][x][9] = 0;
             }
         }
+        this.outlineList = []; //a list of all rendered outlines
     }
 
     totxt(){ //convert the map to txt format
@@ -250,7 +274,7 @@ class ClientMap{
 
     render(){
         translate((-player.x*tileSize)+(tileSize*15), (-player.y*tileSize)+(player.z*(tileSize/2))+(tileSize*7)); //move the camera
-        let outlineList = [];
+        this.outlineList = [];
         push();
         for(let y = 0; y < this.tile_map.length; y++){
             for(let x = 0; x < this.tile_map[y].length; x++){
@@ -269,37 +293,9 @@ class ClientMap{
                 }
             }
         }
-        for(let i = 0; i < outlineList.length; i++){
-            image(img_map[outlineList[i].img_num], (outlineList[i].x*tileSize), (outlineList[i].y*tileSize) - (outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        for(let i = 0; i < this.outlineList.length; i++){ //render outlines
+            image(img_map[4][this.outlineList[i].img_num], (this.outlineList[i].x*tileSize), (this.outlineList[i].y*tileSize) - (this.outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
         }
         pop();
     }
 }
-
-/* Player rendering
-if(tile_map[y][x][z] === 4){
-    fill(0, 70);
-    stroke(0);
-    let shadowZ = 0;
-    for(let z2 = 0; z2 < tile_map[y][x].length; z2++){
-        if(tile_map[y][x][z2] != 0 && tile_map[y][x][z2] != 4){
-            shadowZ = z2;
-        }
-    }
-    circle((x*tileSize) + (tileSize/2), (y*tileSize) - (shadowZ * tileSize/2) + (tileSize/2), (10-(z-shadowZ)) * (tileSize/20));
-    if(player.x === x && player.y === y && player.z === z){
-        image(img_map[(tile_map[y][x][z])], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
-    }
-    else{
-        image(img_map[(tile_map[y][x][z])+1], (x*tileSize), (y*tileSize) - (z * tileSize/2), tileSize, tileSize + (tileSize/2));
-    }
-    let OutlineBool = false;
-    for(let i = z+1; i < tile_map[y][x].length; i++){
-        if(tile_map[y][x][i] !== 0){
-            OutlineBool = true;
-        }
-    }
-    if(OutlineBool){
-        outlineList.push({x: x, y: y, z: z, img_num: (player.x === x && player.y === y && player.z === z)? 8:7});
-    }
-}*/

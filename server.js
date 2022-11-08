@@ -63,10 +63,10 @@ io.onConnection(channel => {
 
             //use the type to create the right tile class
             if(tempArr[0] == 1){ //solid
-                cs_map.tile_map[y][x][z] = new ServerTile(1, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(1, tempArr[1]);
             }
             else if(tempArr[0] == 2){ //liquid
-                cs_map.tile_map[y][x][z] = new ServerTile(2, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(2, tempArr[1]);
             }
             else if(tempArr[0] == 3){ //entity
                 cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
@@ -74,7 +74,7 @@ io.onConnection(channel => {
                 cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
             }
             else if(tempArr[0] == 4){ //facing
-                cs_map.tile_map[y][x][z] = new ServerTile(4, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(4, tempArr[1]);
             }
             else{
                 console.log("tile type not found server side " + tempArr[0]);
