@@ -32,8 +32,34 @@ function tokenize(sc){ //turn the string script into an array of tokens
   syntaxError--;
   lookT = 0;
   let arr = []; //this will become the new sc
-  //arr = arr.concat(checkToken("sq", sc, lookT));
-  //arr = arr.concat(checkToken("cr", sc, lookT));
+  //arr = arr.concat(checkToken("sq", sc));
+  //arr = arr.concat(checkToken("cr", sc));
+  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] === "mine"){
+    lookT += 5;
+    arr.push("mine");
+    let lookA = lookT;
+    let temp = ""
+    while(sc[lookA] !== ";"){
+      temp += sc[lookA];
+      lookA++;
+    }
+    arr = arr.concat(temp.split(","));
+    arr.push(";");
+    lookT = lookA + 1;
+  }
+  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] + sc[lookT+4] === "place"){
+    lookT += 6;
+    arr.push("place");
+    let lookA = lookT;
+    let temp = ""
+    while(sc[lookA] !== ";"){
+      temp += sc[lookA];
+      lookA++;
+    }
+    arr = arr.concat(temp.split(","));
+    arr.push(";");
+    lookT = lookA + 1;
+  }
   if(sc[lookT] + sc[lookT+1] === "if"){ //finds an if token
     lookT += 3; //move the look to after the "if "
     arr.push("if");
@@ -104,6 +130,19 @@ function parse(sc){
         sc = sc.slice(1);
       }
       sc = sc.slice(1);
+    }
+    else if(sc[0] === "mine"){
+        sc = sc.slice(1);
+        params = parse(sc);
+        mine(params);
+        sc = sc.slice(params.length+1)
+    }
+    else if(sc[0] === "place"){
+        console.log(sc)
+        sc = sc.slice(1);
+        params = parse(sc);
+        place(params);
+        sc = sc.slice(params.length+1)
     }
     /*
     else if(sc[0] === "sq"){
@@ -221,14 +260,14 @@ function place(params){
             console.log("place 0, doesnt work in survival\nPlease use mine");
         }
         else{
-            channel.emit('change', {x: x, y: y, z: z, to: {type: 1, name: tileID}});
+            channel.emit('change', {x: x, y: y, z: z, to: ("1."+tileID)});
         }
     }
 }
 
 //place an air block and add that block to the players inventory "mine x,y,z;" or "mine;"
 function mine(params){
-    let mode = "L"; //s for survival, L for level-editing
+    let mode = "s"; //s for survival, L for level-editing
 
     let x=player.x + floor(mouseX/tileSize) - 15 
     let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
