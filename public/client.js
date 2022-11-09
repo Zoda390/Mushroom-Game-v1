@@ -144,13 +144,39 @@ function takeInput(){
 }
 
 function mouseReleased() {
-    if(millis() - lastbuildMilli > build_wait && cc_map.tile_map[player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== undefined && cc_map.tile_map[player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)][player.x + floor(mouseX/tileSize) - 15][player.z - 1] !== 4){
+    if(millis() - lastbuildMilli > build_wait){
+        let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
+        let x = player.x + floor(mouseX/tileSize) - 15;
+        let z = player.z;
+
         if(mouseButton == LEFT){ //mine
-            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z: player.z - 1, to: 0});
+            if(keyIsDown(run_button)){
+                z = player.z + 1;
+            }
+            if(cc_map.tile_map[y][x][z] !== undefined){
+                if(cc_map.tile_map[y][x][z] == 0){
+                    z--;
+                }
+                if(cc_map.tile_map[y][x][z].name !== "player"){
+                    channel.emit('change', {x: x, y: y, z: z, to: 0});
+                    lastbuildMilli = millis();
+                }
+            }
         }
         else{  //build
-            channel.emit('change', {x: player.x + floor(mouseX/tileSize) - 15, y: player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0), z: player.z - 1, to: ('1.' + player.hand)});
+            z = player.z-1;
+            if(keyIsDown(run_button)){
+                z = player.z;
+            }
+            if(cc_map.tile_map[y][x][z] !== undefined){
+                if(cc_map.tile_map[y][x][z] != 0){
+                    z++;
+                }
+                if(cc_map.tile_map[y][x][z].name !== "player"){
+                    channel.emit('change', {x: x, y: y, z: z, to: "1." + player.hand});
+                    lastbuildMilli = millis();
+                }
+            }
         }
-        lastbuildMilli = millis();
     }
 }

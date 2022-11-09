@@ -54,7 +54,7 @@ class ClientTilePlayer extends ClientTile{ //an entity tile
         }
         circle((this.pos.x*tileSize) + (tileSize/2), (this.pos.y*tileSize) - (shadowZ * tileSize/2) + (tileSize/2), (10-(this.pos.z-shadowZ)) * (tileSize/20));
 
-        image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        image(img_map[this.img_num][this.facing + ((this.team == 1)? 8:0)], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
         
         //deal with player outlines
         let OutlineBool = false;

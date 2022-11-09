@@ -37,6 +37,8 @@ var cs_map = new ServerMap('unUpdated', 0, 0); //curent server map
 cs_map.fromtxt("map.txt");
 cs_map.save();
 
+
+var player_count = 0;
 //dealing with messages that the server gets
 io.onConnection(channel => {
     channel.onDisconnect(() => { //client disconnect message
@@ -48,9 +50,10 @@ io.onConnection(channel => {
         io.room(channel.roomId).emit('give_world', {str: cs_map.totxt(), name: cs_map.name});
         
         //add a player to the map
-        cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), 0, 0);
+        cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), (player_count%2), 0);
         cs_map.tile_map[data.y][data.x][data.z].id = data.id;
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: cs_map.tile_map[data.y][data.x][data.z].toStr()});
+        player_count++;
     })
 
     channel.on('change', data => { //change a block data = {x:int, y:int, z:int, to:str}
