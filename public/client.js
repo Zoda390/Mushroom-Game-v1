@@ -12,6 +12,7 @@ function preload(){
     img_map.push([loadImage("imgs/water-v1.png")]);
     img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player(left)-v1.png"), loadImage("imgs/player(back)-v1.png"), loadImage("imgs/player(right)-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/playerOutline(left)-v1.png"), loadImage("imgs/playerOutline(back)-v1.png"), loadImage("imgs/playerOutline(right)-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/player2(left)-v1.png"), loadImage("imgs/player2(back)-v1.png"), loadImage("imgs/player2(right)-v1.png"), loadImage("imgs/player2Outline-v1.png"), loadImage("imgs/player2Outline(left)-v1.png"), loadImage("imgs/player2Outline(back)-v1.png"), loadImage("imgs/player2Outline(right)-v1.png")]);
     img_map.push([loadImage("imgs/wood-v1.png")]);
+    img_map.push([loadImage("imgs/minion-v1.png"), loadImage("imgs/minion(left)-v1.png"), loadImage("imgs/minion(back)-v1.png"), loadImage("imgs/minion(right)-v1.png"), loadImage("imgs/minionOutline-v1.png"), loadImage("imgs/minionOutline(left)-v1.png"), loadImage("imgs/minionOutline(back)-v1.png"), loadImage("imgs/minionOutline(right)-v1.png"), loadImage("imgs/minion2-v1.png"), loadImage("imgs/minion2(left)-v1.png"), loadImage("imgs/minion2(back)-v1.png"), loadImage("imgs/minion2(right)-v1.png"), loadImage("imgs/minion2Outline-v1.png"), loadImage("imgs/minion2Outline(left)-v1.png"), loadImage("imgs/minion2Outline(back)-v1.png"), loadImage("imgs/minion2Outline(right)-v1.png")]);
 }
 
 function setup(){
@@ -65,7 +66,7 @@ function setup(){
                     cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("liquid", tile_name_map[tempArr[1]], data.x, data.y, data.z);
                 }
                 else if(tempArr[0] == 3){ //entity
-                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTilePlayer("entity", "player", data.x, data.y, data.z, tempArr[3], tempArr[4]);
+                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTileEntity("entity", "player", data.x, data.y, data.z, tempArr[3], tempArr[4]);
                     cc_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
                     cc_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
                 }
@@ -157,7 +158,7 @@ function mouseReleased() {
                 if(cc_map.tile_map[y][x][z] == 0){
                     z--;
                 }
-                if(cc_map.tile_map[y][x][z].name !== "player"){
+                if(cc_map.tile_map[y][x][z].type !== "entity"){
                     channel.emit('change', {x: x, y: y, z: z, to: 0});
                     lastbuildMilli = millis();
                 }
@@ -172,7 +173,7 @@ function mouseReleased() {
                 if(cc_map.tile_map[y][x][z] != 0){
                     z++;
                 }
-                if(cc_map.tile_map[y][x][z].name !== "player"){
+                if(cc_map.tile_map[y][x][z].type !== "entity"){
                     channel.emit('change', {x: x, y: y, z: z, to: "1." + player.hand});
                     lastbuildMilli = millis();
                 }

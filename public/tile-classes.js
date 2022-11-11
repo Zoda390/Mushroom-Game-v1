@@ -7,7 +7,7 @@ function find_in_array(input, arr){
 }
 
 var tile_type_map = [0, 'solid', 'liquid', 'entity', 'facing'];
-var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood'];
+var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood', 'minion'];
 
 class ClientTile{ //a solid tile
     constructor(type, name, x, y, z){
@@ -26,11 +26,40 @@ class ClientTile{ //a solid tile
     }
 }
 
-class ClientTilePlayer extends ClientTile{ //an entity tile
-    constructor(type, name, x, y, z, team, facing){
+class ClientTileFacing extends ClientTile{ //an facing tile
+    constructor(type, name, x, y, z, full){
         super(type, name, x, y, z);
+        this.full = full; //an int for how much the tile is filled, 10 is full
+    }
+
+    toStr(){
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.facing;
+    }
+
+    render(){
+        image(img_map[this.img_num][this.full], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+    }
+}
+
+class ClientTileFacing extends ClientTile{ //an facing tile
+    constructor(type, name, x, y, z, facing){
+        super(type, name, x, y, z);
+        this.facing = facing; //an int for which direction the tile is facing
+    }
+
+    toStr(){
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.facing;
+    }
+
+    render(){
+        image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+    }
+}
+
+class ClientTileEntity extends ClientTileFacing{ //an entity tile
+    constructor(type, name, x, y, z, team, facing){
+        super(type, name, x, y, z, facing);
         this.team = team;
-        this.facing = facing; //an int for which direction the entity is facing
         this.move_counter = 0;
         this.walk_wait = 10; //frames before you can walk again
         this.run_wait = 5; //frames before you can run again
@@ -250,7 +279,7 @@ class ClientMap{
                             this.tile_map[y][x][z] = new ClientTile("liquid", tile_name_map[tempArr[1]], x, y, z);
                         }
                         else if(tempArr[0] == 3){ //entity
-                            this.tile_map[y][x][z] = new ClientTilePlayer("entity", "player", x, y, z, tempArr[3], tempArr[4]);
+                            this.tile_map[y][x][z] = new ClientTileEntity("entity", "player", x, y, z, tempArr[3], tempArr[4]);
                             this.tile_map[y][x][z].move_counter = tempArr[5];
                             this.tile_map[y][x][z].id = tempArr[2];
                         }
