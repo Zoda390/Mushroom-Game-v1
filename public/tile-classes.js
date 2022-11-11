@@ -115,6 +115,7 @@ class ClientMap{
         this.name = name; //name of map
         this.seed = seed; //seed used for map gen & random stuffs
         this.ver = ver; //version of game that map was made in
+        this.mode = 's';
         this.tile_map = [];
         for(let y = 0; y < 20; y++){
             this.tile_map[y] = [];

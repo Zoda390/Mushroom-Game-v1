@@ -60,6 +60,32 @@ function tokenize(sc){ //turn the string script into an array of tokens
     arr.push(";");
     lookT = lookA + 1;
   }
+  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] + sc[lookT+4] + sc[lookT+5] === "s_mode"){
+    lookT += 7;
+    arr.push("s_mode");
+    let lookA = lookT;
+    let temp = ""
+    while(sc[lookA] !== ";"){
+      temp += sc[lookA];
+      lookA++;
+    }
+    arr = arr.concat(temp.split(","));
+    arr.push(";");
+    lookT = lookA + 1;
+  }
+  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] + sc[lookT+4] + sc[lookT+5] === "c_prop"){ //wont work yet cause MushScript doesnt recognize text as an input value
+    lookT += 7;
+    arr.push("c_prop");
+    let lookA = lookT;
+    let temp = ""
+    while(sc[lookA] !== ";"){
+      temp += sc[lookA];
+      lookA++;
+    }
+    arr = arr.concat(temp.split(","));
+    arr.push(";");
+    lookT = lookA + 1;
+  }
   if(sc[lookT] + sc[lookT+1] === "if"){ //finds an if token
     lookT += 3; //move the look to after the "if "
     arr.push("if");
@@ -138,11 +164,22 @@ function parse(sc){
         sc = sc.slice(params.length+1)
     }
     else if(sc[0] === "place"){
-        console.log(sc)
         sc = sc.slice(1);
         params = parse(sc);
         place(params);
         sc = sc.slice(params.length+1)
+    }
+    else if(sc[0] === "s_mode"){
+      sc = sc.slice(1);
+      params = parse(sc);
+      s_mode(params);
+      sc = sc.slice(params.length+1)
+    }
+    else if(sc[0] === "c_prop"){ //wont work yet cause MushScript doesnt recognize text as an input value
+      sc = sc.slice(1);
+      params = parse(sc);
+      c_prop(params);
+      sc = sc.slice(params.length+1)
     }
     /*
     else if(sc[0] === "sq"){
@@ -228,7 +265,7 @@ function parse(sc){
 
 //place a block "place tileID,x,y,z;" or "place tileID;"
 function place(params){
-    let mode = "L"; //s for survival, L for level-editing
+    let mode = cc_map.mode; //s for survival, L for level-editing
 
     let tileID = params[0];
     let x=player.x + floor(mouseX/tileSize) - 15 
@@ -267,7 +304,7 @@ function place(params){
 
 //place an air block and add that block to the players inventory "mine x,y,z;" or "mine;"
 function mine(params){
-    let mode = "s"; //s for survival, L for level-editing
+    let mode = cc_map.mode; //s for survival, L for level-editing
 
     let x=player.x + floor(mouseX/tileSize) - 15 
     let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
@@ -346,13 +383,22 @@ function fillTiles(params){
             for(let z = z1; z < z2; z++){
                 if(keep){
                     if(map.tile_map[y][x][z] != 0){
-                        place("L", tileID, x, y, z);
+                        place([tileID, x, y, z]);
                     }
                 }
                 else{
-                    place("L", tileID, x, y, z);
+                    place([tileID, x, y, z]);
                 }
             }
         }
     }
+}
+
+function s_mode(params){
+  if(params[0] == 0){
+    cc_map.mode = 's';
+  }
+  else if(params[0] == 1){
+    cc_map.mode = 'L';
+  }
 }
