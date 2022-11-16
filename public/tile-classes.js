@@ -26,7 +26,7 @@ class ClientTile{ //a solid tile
     }
 }
 
-class ClientTileFacing extends ClientTile{ //an facing tile
+class ClientTileLiquid extends ClientTile{ //an liquid tile
     constructor(type, name, x, y, z, full){
         super(type, name, x, y, z);
         this.full = full; //an int for how much the tile is filled, 10 is full
