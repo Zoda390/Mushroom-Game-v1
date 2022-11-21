@@ -39,6 +39,7 @@ cs_map.save();
 
 
 var player_count = 0;
+var chat_arr = [{team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 1, txt:"Zoda2: Gay people!"}, {team: 2, txt:"Server: Gay people!"}];
 //dealing with messages that the server gets
 io.onConnection(channel => {
     channel.onDisconnect(() => { //client disconnect message
@@ -90,5 +91,10 @@ io.onConnection(channel => {
 
         //send the change out to all clients
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: data.to});
+    })
+
+    channel.on('msg', data => {
+        chat_arr.push(data);
+        io.room(channel.roomId).emit('msg', data);
     })
 })

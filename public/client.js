@@ -2,9 +2,11 @@ var channel; //gecko server
 var cc_map; //curent client map
 var tileSize = 64; //rendered size of tiles
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
+var ui = {}; //an object that will store comonly used ui variables
 
 //create the img_map
 var img_map = [];
+var item_img_map = [];
 function preload(){
     img_map.push(0);
     img_map.push([loadImage("imgs/stone-v1.png")]);
@@ -13,6 +15,13 @@ function preload(){
     img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player(left)-v1.png"), loadImage("imgs/player(back)-v1.png"), loadImage("imgs/player(right)-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/playerOutline(left)-v1.png"), loadImage("imgs/playerOutline(back)-v1.png"), loadImage("imgs/playerOutline(right)-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/player2(left)-v1.png"), loadImage("imgs/player2(back)-v1.png"), loadImage("imgs/player2(right)-v1.png"), loadImage("imgs/player2Outline-v1.png"), loadImage("imgs/player2Outline(left)-v1.png"), loadImage("imgs/player2Outline(back)-v1.png"), loadImage("imgs/player2Outline(right)-v1.png")]);
     img_map.push([loadImage("imgs/wood-v1.png")]);
     img_map.push([loadImage("imgs/minion-v1.png"), loadImage("imgs/minion(left)-v1.png"), loadImage("imgs/minion(back)-v1.png"), loadImage("imgs/minion(right)-v1.png"), loadImage("imgs/minionOutline-v1.png"), loadImage("imgs/minionOutline(left)-v1.png"), loadImage("imgs/minionOutline(back)-v1.png"), loadImage("imgs/minionOutline(right)-v1.png"), loadImage("imgs/minion2-v1.png"), loadImage("imgs/minion2(left)-v1.png"), loadImage("imgs/minion2(back)-v1.png"), loadImage("imgs/minion2(right)-v1.png"), loadImage("imgs/minion2Outline-v1.png"), loadImage("imgs/minion2Outline(left)-v1.png"), loadImage("imgs/minion2Outline(back)-v1.png"), loadImage("imgs/minion2Outline(right)-v1.png")]);
+
+    item_img_map.push(0);
+    item_img_map.push(loadImage("imgs/items/stone-v1.png"));
+    item_img_map.push(loadImage("imgs/items/grass-v1.png"));
+    item_img_map.push(loadImage("imgs/items/water-v1.png"));
+    item_img_map.push(loadImage("imgs/items/wood-v1.png"));
+    item_img_map.push(loadImage("imgs/items/pickaxe.png"));
 }
 
 function setup(){
@@ -81,15 +90,24 @@ function setup(){
                 cc_map.tile_map[data.y][data.x][data.z] = 0;
             }
         })
+
+        channel.on('msg', data => {
+            chat_arr.push(data);
+            if(chat_arr.length > 12){
+                chat_arr.splice(0, 1);
+            }
+        })
     })
 
     createCanvas(tileSize*30, tileSize*14);
+    setup_ui();
 }
 
 function draw(){
     background(139, 176, 173);
     if(cc_map != undefined){ //only draw the map if the map exists
         cc_map.render();
+        r_all_ui(["name_plate", "team_info", "player_info", "chat_box"]);
         takeInput();
     }
 }
@@ -110,6 +128,7 @@ var slot4_button = 52; //4
 //waiting stuffs
 var lastbuildMilli = 0;
 var build_wait = 100;
+var lastChatMili = 0;
 
 function takeInput(){
     if (keyIsDown(move_right_button) && player.x != cc_map.tile_map[0].length-1 && cc_map.tile_map[player.y][player.x+1][player.z] === 0 && cc_map.tile_map[player.y][player.x][player.z].type == "entity") {
@@ -141,6 +160,10 @@ function takeInput(){
     }
     if (keyIsDown(slot4_button)){
         player.hand = 5;
+    }
+    if (keyIsDown(13) && millis()-lastChatMili > 200){ //enter
+        send_chat_msg();
+        lastChatMili = millis();
     }
 }
 
