@@ -5,7 +5,7 @@ class ClientItem{ //block
     constructor(type, name, amount, click){
         this.type = type;
         this.name = name;
-        this.img_num = find_in_array(this.name, item_name_map); //img found in img_map
+        this.img_num = find_in_array(this.name, item_name_map); //img found in tile_img_map
         this.amount = amount;
         this.click = click;
     }

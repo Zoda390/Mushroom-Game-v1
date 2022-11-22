@@ -4,17 +4,17 @@ var tileSize = 64; //rendered size of tiles
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
 
-//create the img_map
-var img_map = [];
+//create the img_maps
+var tile_img_map = [];
 var item_img_map = [];
 function preload(){
-    img_map.push(0);
-    img_map.push([loadImage("imgs/stone-v1.png")]);
-    img_map.push([loadImage("imgs/grass-v1.png")]);
-    img_map.push([loadImage("imgs/water-v1.png")]);
-    img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player(left)-v1.png"), loadImage("imgs/player(back)-v1.png"), loadImage("imgs/player(right)-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/playerOutline(left)-v1.png"), loadImage("imgs/playerOutline(back)-v1.png"), loadImage("imgs/playerOutline(right)-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/player2(left)-v1.png"), loadImage("imgs/player2(back)-v1.png"), loadImage("imgs/player2(right)-v1.png"), loadImage("imgs/player2Outline-v1.png"), loadImage("imgs/player2Outline(left)-v1.png"), loadImage("imgs/player2Outline(back)-v1.png"), loadImage("imgs/player2Outline(right)-v1.png")]);
-    img_map.push([loadImage("imgs/wood-v1.png")]);
-    img_map.push([loadImage("imgs/minion-v1.png"), loadImage("imgs/minion(left)-v1.png"), loadImage("imgs/minion(back)-v1.png"), loadImage("imgs/minion(right)-v1.png"), loadImage("imgs/minionOutline-v1.png"), loadImage("imgs/minionOutline(left)-v1.png"), loadImage("imgs/minionOutline(back)-v1.png"), loadImage("imgs/minionOutline(right)-v1.png"), loadImage("imgs/minion2-v1.png"), loadImage("imgs/minion2(left)-v1.png"), loadImage("imgs/minion2(back)-v1.png"), loadImage("imgs/minion2(right)-v1.png"), loadImage("imgs/minion2Outline-v1.png"), loadImage("imgs/minion2Outline(left)-v1.png"), loadImage("imgs/minion2Outline(back)-v1.png"), loadImage("imgs/minion2Outline(right)-v1.png")]);
+    tile_img_map.push(0);
+    tile_img_map.push([loadImage("imgs/stone-v1.png")]);
+    tile_img_map.push([loadImage("imgs/grass-v1.png")]);
+    tile_img_map.push([loadImage("imgs/water-v1.png")]);
+    tile_img_map.push([loadImage("imgs/player-v1.png"), loadImage("imgs/player(left)-v1.png"), loadImage("imgs/player(back)-v1.png"), loadImage("imgs/player(right)-v1.png"), loadImage("imgs/playerOutline-v1.png"), loadImage("imgs/playerOutline(left)-v1.png"), loadImage("imgs/playerOutline(back)-v1.png"), loadImage("imgs/playerOutline(right)-v1.png"), loadImage("imgs/player2-v1.png"), loadImage("imgs/player2(left)-v1.png"), loadImage("imgs/player2(back)-v1.png"), loadImage("imgs/player2(right)-v1.png"), loadImage("imgs/player2Outline-v1.png"), loadImage("imgs/player2Outline(left)-v1.png"), loadImage("imgs/player2Outline(back)-v1.png"), loadImage("imgs/player2Outline(right)-v1.png")]);
+    tile_img_map.push([loadImage("imgs/wood-v1.png")]);
+    tile_img_map.push([loadImage("imgs/minion-v1.png"), loadImage("imgs/minion(left)-v1.png"), loadImage("imgs/minion(back)-v1.png"), loadImage("imgs/minion(right)-v1.png"), loadImage("imgs/minionOutline-v1.png"), loadImage("imgs/minionOutline(left)-v1.png"), loadImage("imgs/minionOutline(back)-v1.png"), loadImage("imgs/minionOutline(right)-v1.png"), loadImage("imgs/minion2-v1.png"), loadImage("imgs/minion2(left)-v1.png"), loadImage("imgs/minion2(back)-v1.png"), loadImage("imgs/minion2(right)-v1.png"), loadImage("imgs/minion2Outline-v1.png"), loadImage("imgs/minion2Outline(left)-v1.png"), loadImage("imgs/minion2Outline(back)-v1.png"), loadImage("imgs/minion2Outline(right)-v1.png")]);
 
     item_img_map.push(0);
     item_img_map.push(loadImage("imgs/items/stone-v1.png"));

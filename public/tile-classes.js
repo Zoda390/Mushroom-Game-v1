@@ -13,7 +13,7 @@ class ClientTile{ //a solid tile
     constructor(type, name, x, y, z){
         this.type = type;
         this.name = name;
-        this.img_num = find_in_array(this.name, tile_name_map); //img found in img_map
+        this.img_num = find_in_array(this.name, tile_name_map); //img found in tile_img_map
         this.pos = {x: x, y: y, z: z};
     }
 
@@ -22,7 +22,7 @@ class ClientTile{ //a solid tile
     }
 
     render(){
-        image(img_map[this.img_num][0], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        image(tile_img_map[this.img_num][0], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
     }
 }
 
@@ -37,7 +37,7 @@ class ClientTileLiquid extends ClientTile{ //an liquid tile
     }
 
     render(){
-        image(img_map[this.img_num][this.full], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        image(tile_img_map[this.img_num][this.full], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
     }
 }
 
@@ -52,7 +52,7 @@ class ClientTileFacing extends ClientTile{ //an facing tile
     }
 
     render(){
-        image(img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        image(tile_img_map[this.img_num][this.facing], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
     }
 }
 
@@ -83,7 +83,7 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
         }
         circle((this.pos.x*tileSize) + (tileSize/2), (this.pos.y*tileSize) - (shadowZ * tileSize/2) + (tileSize/2), (10-(this.pos.z-shadowZ)) * (tileSize/20));
 
-        image(img_map[this.img_num][this.facing + ((this.team == 1)? 8:0)], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        image(tile_img_map[this.img_num][this.facing + ((this.team == 1)? 8:0)], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
         
         //deal with player outlines
         let OutlineBool = false;
@@ -324,7 +324,7 @@ class ClientMap{
             }
         }
         for(let i = 0; i < this.outlineList.length; i++){ //render outlines
-            image(img_map[4][this.outlineList[i].img_num], (this.outlineList[i].x*tileSize), (this.outlineList[i].y*tileSize) - (this.outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
+            image(tile_img_map[4][this.outlineList[i].img_num], (this.outlineList[i].x*tileSize), (this.outlineList[i].y*tileSize) - (this.outlineList[i].z * tileSize/2), tileSize, tileSize + (tileSize/2));
         }
         pop();
     }
