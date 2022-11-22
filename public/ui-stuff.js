@@ -40,6 +40,7 @@ function setup_ui(){
     ui.team2 = color(87, 167, 214); //blue
 
     s_chat_ui();
+    s_main_menu_ui();
 }
 
 function r_name_ui(name, team){
@@ -184,6 +185,7 @@ function s_chat_ui(){
     chat_input.style('bottom', '30px');
     chat_input.style('width', '385px');
     chat_input.input(update_chat_input_txt);
+    chat_input.hide();
 }
 
 function update_chat_input_txt(){
@@ -230,5 +232,55 @@ function r_chat_ui(arr, team){
         textAlign(LEFT, TOP);
         text(arr[i].txt, x+(ui.s_size*1.5), y+(ui.s_size*1.5)+(i*21));
     }
+    pop();
+}
+
+var mm_start_button = {html: 0, pos:0, size: {x: 400, y: 100}};
+var mm_options_button = {html: 0, pos:0, size: {x: 400, y: 100}};
+var mm_credits_button = {html: 0, pos:0, size: {x: 400, y: 100}};
+function s_main_menu_ui(){
+    mm_start_button.pos = {x: width/2, y: (height/2)+100};
+    mm_options_button.pos = {x: width/2, y: (height/2)+210};
+    mm_credits_button.pos = {x: width/2, y: (height/2)+320};
+
+    mm_start_button.html = createButton("Start");
+    mm_options_button.html = createButton("Options");
+    mm_credits_button.html = createButton("Credits");
+
+    mm_start_button.html.position(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2));
+    mm_options_button.html.position(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2));
+    mm_credits_button.html.position(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2));
+    
+    mm_start_button.html.size(mm_start_button.size.x, mm_start_button.size.y);
+    mm_options_button.html.size(mm_options_button.size.x, mm_options_button.size.y);
+    mm_credits_button.html.size(mm_credits_button.size.x, mm_credits_button.size.y);
+
+    mm_start_button.html.style('color', '#ffffff00');
+    mm_start_button.html.style('background-color', '#ffffff00');
+    mm_options_button.html.style('color', '#ffffff00');
+    mm_options_button.html.style('background-color', '#ffffff00');
+    mm_credits_button.html.style('color', '#ffffff00');
+    mm_credits_button.html.style('background-color', '#ffffff00');
+
+    mm_start_button.html.hide();
+    mm_options_button.html.hide();
+    mm_credits_button.html.hide();
+}
+
+function r_main_menu_ui(){
+    push();
+    stroke(ui.black);
+    strokeWeight(ui.s_size);
+    fill(ui.gray1);
+    rect(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2)- 30, mm_start_button.size.x, mm_start_button.size.y);
+    rect(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2)- 30, mm_options_button.size.x, mm_options_button.size.y);
+    rect(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2)- 30, mm_credits_button.size.x, mm_credits_button.size.y);
+    textSize(ui.t_size);
+    strokeWeight(ui.ts_size);
+    fill(ui.white);
+    textAlign(CENTER, CENTER);
+    text(mm_start_button.html.elt.innerText, mm_start_button.pos.x, mm_start_button.pos.y-30);
+    text(mm_options_button.html.elt.innerText, mm_options_button.pos.x, mm_options_button.pos.y-30);
+    text(mm_credits_button.html.elt.innerText, mm_credits_button.pos.x, mm_credits_button.pos.y-30);
     pop();
 }

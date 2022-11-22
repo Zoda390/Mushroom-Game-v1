@@ -3,6 +3,7 @@ var cc_map; //curent client map
 var tileSize = 64; //rendered size of tiles
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
+var gameState = "Main_Menu";
 
 //create the img_maps
 var tile_img_map = [];
@@ -104,11 +105,23 @@ function setup(){
 }
 
 function draw(){
-    background(139, 176, 173);
-    if(cc_map != undefined){ //only draw the map if the map exists
-        cc_map.render();
-        r_all_ui(["name_plate", "team_info", "player_info", "chat_box"]);
-        takeInput();
+    if(gameState == "Main_Menu"){
+        background(139, 176, 173);
+        r_main_menu_ui();
+    }
+    else if(gameState == "Lobby_select"){
+
+    }
+    else if(gameState == "in-Lobby"){
+        
+    }
+    else if(gameState == "game"){
+        background(139, 176, 173);
+        if(cc_map != undefined){ //only draw the map if the map exists
+            cc_map.render();
+            r_all_ui(["name_plate", "team_info", "player_info", "chat_box"]);
+            takeInput();
+        }
     }
 }
 
@@ -168,37 +181,39 @@ function takeInput(){
 }
 
 function mouseReleased() {
-    if(millis() - lastbuildMilli > build_wait){
-        let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
-        let x = player.x + floor(mouseX/tileSize) - 15;
-        let z = player.z;
-
-        if(mouseButton == LEFT){ //mine
-            if(keyIsDown(run_button)){
-                z = player.z + 1;
-            }
-            if(cc_map.tile_map[y][x][z] !== undefined){
-                if(cc_map.tile_map[y][x][z] == 0){
-                    z--;
+    if(gameState == "game"){
+        if(millis() - lastbuildMilli > build_wait){
+            let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
+            let x = player.x + floor(mouseX/tileSize) - 15;
+            let z = player.z;
+    
+            if(mouseButton == LEFT){ //mine
+                if(keyIsDown(run_button)){
+                    z = player.z + 1;
                 }
-                if(cc_map.tile_map[y][x][z].type !== "entity"){
-                    channel.emit('change', {x: x, y: y, z: z, to: 0});
-                    lastbuildMilli = millis();
+                if(cc_map.tile_map[y][x][z] !== undefined){
+                    if(cc_map.tile_map[y][x][z] == 0){
+                        z--;
+                    }
+                    if(cc_map.tile_map[y][x][z].type !== "entity"){
+                        channel.emit('change', {x: x, y: y, z: z, to: 0});
+                        lastbuildMilli = millis();
+                    }
                 }
             }
-        }
-        else{  //build
-            z = player.z-1;
-            if(keyIsDown(run_button)){
-                z = player.z;
-            }
-            if(cc_map.tile_map[y][x][z] !== undefined){
-                if(cc_map.tile_map[y][x][z] != 0){
-                    z++;
+            else{  //build
+                z = player.z-1;
+                if(keyIsDown(run_button)){
+                    z = player.z;
                 }
-                if(cc_map.tile_map[y][x][z].type !== "entity"){
-                    channel.emit('change', {x: x, y: y, z: z, to: "1." + player.hand});
-                    lastbuildMilli = millis();
+                if(cc_map.tile_map[y][x][z] !== undefined){
+                    if(cc_map.tile_map[y][x][z] != 0){
+                        z++;
+                    }
+                    if(cc_map.tile_map[y][x][z].type !== "entity"){
+                        channel.emit('change', {x: x, y: y, z: z, to: "1." + player.hand});
+                        lastbuildMilli = millis();
+                    }
                 }
             }
         }
