@@ -3,7 +3,7 @@ var cc_map; //curent client map
 var tileSize = 64; //rendered size of tiles
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
-var gameState = "Main_Menu";
+var gameState = "Main_Menu"; //keeps track of what the client is currently doing
 
 //create the img_maps
 var tile_img_map = [];
@@ -106,16 +106,31 @@ function setup(){
 
 function draw(){
     if(gameState == "Main_Menu"){
+        mm_start_button.html.hide();
+        mm_options_button.html.hide();
+        mm_credits_button.html.hide();
         background(139, 176, 173);
         r_main_menu_ui();
     }
     else if(gameState == "Lobby_select"){
-
+        mm_start_button.html.hide();
+        mm_options_button.html.hide();
+        mm_credits_button.html.hide();
+        lobby_start_button.html.hide();
+        lobby_leave_button.html.hide();
+        background(139, 176, 173);
+        r_lobby_select();
     }
     else if(gameState == "in-Lobby"){
-        
+        for(let i = 0; i < lobby_select_buttons.length; i++){
+            lobby_select_buttons[i].html.hide();
+        }
+        background(139, 176, 173);
+        r_lobby();
     }
     else if(gameState == "game"){
+        lobby_start_button.html.hide();
+        lobby_leave_button.html.hide();
         background(139, 176, 173);
         if(cc_map != undefined){ //only draw the map if the map exists
             cc_map.render();
