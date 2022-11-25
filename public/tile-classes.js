@@ -7,7 +7,7 @@ function find_in_array(input, arr){
 }
 
 var tile_type_map = [0, 'solid', 'liquid', 'entity', 'facing'];
-var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood', 'minion'];
+var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood', 'minion', 'crystal base', 'minion log'];
 
 class ClientTile{ //a solid tile
     constructor(type, name, x, y, z){
@@ -68,7 +68,11 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
     }
 
     toStr(){
-        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[]';
+        let invStr = "";
+        for(let i = 0; i < this.inv.length; i++){
+            invStr += this.inv[i].toStr();
+        }
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[' + invStr + ']';
     }
 
     render(){

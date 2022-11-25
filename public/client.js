@@ -16,6 +16,8 @@ function preload(){
     tile_img_map.push([loadImage("imgs/tiles/player-v1.png"), loadImage("imgs/tiles/player(left)-v1.png"), loadImage("imgs/tiles/player(back)-v1.png"), loadImage("imgs/tiles/player(right)-v1.png"), loadImage("imgs/tiles/playerOutline-v1.png"), loadImage("imgs/tiles/playerOutline(left)-v1.png"), loadImage("imgs/tiles/playerOutline(back)-v1.png"), loadImage("imgs/tiles/playerOutline(right)-v1.png"), loadImage("imgs/tiles/player2-v1.png"), loadImage("imgs/tiles/player2(left)-v1.png"), loadImage("imgs/tiles/player2(back)-v1.png"), loadImage("imgs/tiles/player2(right)-v1.png"), loadImage("imgs/tiles/player2Outline-v1.png"), loadImage("imgs/tiles/player2Outline(left)-v1.png"), loadImage("imgs/tiles/player2Outline(back)-v1.png"), loadImage("imgs/tiles/player2Outline(right)-v1.png")]);
     tile_img_map.push([loadImage("imgs/tiles/wood-v1.png")]);
     tile_img_map.push([loadImage("imgs/tiles/minion-v1.png"), loadImage("imgs/tiles/minion(left)-v1.png"), loadImage("imgs/tiles/minion(back)-v1.png"), loadImage("imgs/tiles/minion(right)-v1.png"), loadImage("imgs/tiles/minionOutline-v1.png"), loadImage("imgs/tiles/minionOutline(left)-v1.png"), loadImage("imgs/tiles/minionOutline(back)-v1.png"), loadImage("imgs/tiles/minionOutline(right)-v1.png"), loadImage("imgs/tiles/minion2-v1.png"), loadImage("imgs/tiles/minion2(left)-v1.png"), loadImage("imgs/tiles/minion2(back)-v1.png"), loadImage("imgs/tiles/minion2(right)-v1.png"), loadImage("imgs/tiles/minion2Outline-v1.png"), loadImage("imgs/tiles/minion2Outline(left)-v1.png"), loadImage("imgs/tiles/minion2Outline(back)-v1.png"), loadImage("imgs/tiles/minion2Outline(right)-v1.png")]);
+    tile_img_map.push([loadImage("imgs/tiles/crystal-base-v1.png")]);
+    tile_img_map.push([loadImage("imgs/tiles/mushroom-log-v1.png")]);
 
     item_img_map.push(0);
     item_img_map.push(loadImage("imgs/items/stone-v1.png"));
@@ -79,6 +81,18 @@ function setup(){
                     cc_map.tile_map[data.y][data.x][data.z] = new ClientTileEntity("entity", "player", data.x, data.y, data.z, tempArr[3], tempArr[4]);
                     cc_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
                     cc_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                    let tempArr2 = [];
+                    for(i = tempArr.length - 1; i >= 0; i--){
+                        tempArr2.push(tempArr[i]);
+                        if(tempArr[i][0] == '['){
+                            break;
+                        }
+                    }
+                    tempArr2 = tempArr2.reverse();
+                    tempArr2[0] = tempArr2[0].split('[');
+                    tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
+                    console.log(tempArr2);
+                    cc_map.tile_map[data.y][data.x][data.z].inv = [];
                 }
                 else if(tempArr[0] == 4){ //facing tile
                     cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("facing", tile_name_map[tempArr[1]], data.x, data.y, data.z);

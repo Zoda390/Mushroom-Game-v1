@@ -34,5 +34,17 @@
     "name": "log",
     "img_num": 6,
     "z_offset": 0
+  },
+  {
+    "type": "solid",
+    "name": "crystal base",
+    "img_num": 7,
+    "z_offset": 0
+  },
+  {
+    "type": "solid",
+    "name": "minion log",
+    "img_num": 8,
+    "z_offset": 0
   }
 ]

@@ -76,6 +76,15 @@ io.onConnection(channel => {
                 cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
                 cs_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
                 cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                let tempArr2 = [];
+                for(i = tempArr.length - 1; i >= 0; i--){
+                    tempArr2.push(tempArr[i]);
+                    if(tempArr[i][0] == '['){
+                        break;
+                    }
+                }
+                console.log(tempArr2);
+                cs_map.tile_map[data.y][data.x][data.z].inv = [];
             }
             else if(tempArr[0] == 4){ //facing
                 cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(4, tempArr[1]);
