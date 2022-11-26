@@ -81,18 +81,21 @@ function setup(){
                     cc_map.tile_map[data.y][data.x][data.z] = new ClientTileEntity("entity", "player", data.x, data.y, data.z, tempArr[3], tempArr[4]);
                     cc_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
                     cc_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
-                    let tempArr2 = [];
-                    for(i = tempArr.length - 1; i >= 0; i--){
-                        tempArr2.push(tempArr[i]);
-                        if(tempArr[i][0] == '['){
-                            break;
+                    if(tempArr[tempArr.length-1] != '[]'){
+                        let tempArr2 = [];
+                        for(let i = tempArr.length - 1; i >= 0; i--){
+                            tempArr2.push(tempArr[i]);
+                            if(tempArr[i][0] == '['){
+                                break;
+                            }
                         }
+                        tempArr2 = tempArr2.reverse();
+                        tempArr2[0] = tempArr2[0].replace('[', '');
+                        tempArr2[0] = parseInt(tempArr2[0]);
+                        tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
+                        console.log(tempArr2);
+                        cc_map.tile_map[data.y][data.x][data.z].inv[0] = new ClientItem(item_type_map[tempArr2[0]], item_name_map[tempArr2[1]], tempArr2[2], '');
                     }
-                    tempArr2 = tempArr2.reverse();
-                    tempArr2[0] = tempArr2[0].split('[');
-                    tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
-                    console.log(tempArr2);
-                    cc_map.tile_map[data.y][data.x][data.z].inv = [];
                 }
                 else if(tempArr[0] == 4){ //facing tile
                     cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("facing", tile_name_map[tempArr[1]], data.x, data.y, data.z);

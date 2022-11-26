@@ -286,6 +286,21 @@ class ClientMap{
                             this.tile_map[y][x][z] = new ClientTileEntity("entity", "player", x, y, z, tempArr[3], tempArr[4]);
                             this.tile_map[y][x][z].move_counter = tempArr[5];
                             this.tile_map[y][x][z].id = tempArr[2];
+                            if(tempArr[tempArr.length-1] != '[]'){
+                                let tempArr2 = [];
+                                for(let i = tempArr.length - 1; i >= 0; i--){
+                                    tempArr2.push(tempArr[i]);
+                                    if(tempArr[i][0] == '['){
+                                        break;
+                                    }
+                                }
+                                tempArr2 = tempArr2.reverse();
+                                tempArr2[0] = tempArr2[0].replace('[', '');
+                                tempArr2[0] = parseInt(tempArr2[0]);
+                                tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
+                                console.log(tempArr2);
+                                cc_map.tile_map[data.y][data.x][data.z].inv[0] = new ClientItem(item_type_map[tempArr2[0]], item_name_map[tempArr2[1]], tempArr2[2], '');
+                            }
                         }
                         else if(tempArr[0] == 4){ //facing
                             this.tile_map[y][x][z] = new ClientTile("facing", tile_name_map[tempArr[1]], x, y, z);

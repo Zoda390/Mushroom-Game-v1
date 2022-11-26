@@ -38,6 +38,19 @@ export class ServerTileEntity extends ServerTile{
     }
 }
 
+export class ServerItem {
+    constructor(type, name, amount, click){
+        this.type = type;
+        this.name = name;
+        this.amount = amount;
+        this.click = click;
+    }
+
+    toStr(){
+        return this.type + '.' + this.name + '.' + this.amount;
+    }
+}
+
 export class ServerMap{
     constructor(name, seed, ver){
         this.name = name; //name of map

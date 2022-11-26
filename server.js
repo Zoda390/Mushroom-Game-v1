@@ -1,7 +1,7 @@
 import geckos from '@geckos.io/server'
 import express from 'express'
 import fs from 'fs'
-import {find_in_array, ServerTile, ServerMap, ServerTileEntity} from './server-classes.js'
+import {find_in_array, ServerTile, ServerMap, ServerTileEntity, ServerItem} from './server-classes.js'
 
 //server stuff
 const port = 3000;
@@ -62,7 +62,9 @@ io.onConnection(channel => {
             //parse the str from data.to
             let tempArr = data.to.split('.');
             for(let i = 0; i < tempArr.length; i++){
-                tempArr[i] = parseInt(tempArr[i]);
+                if(tempArr[i] == parseInt(tempArr[i]) + ''){
+                    tempArr[i] = parseInt(tempArr[i]);
+                }
             }
 
             //use the type to create the right tile class
@@ -76,15 +78,21 @@ io.onConnection(channel => {
                 cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
                 cs_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
                 cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
-                let tempArr2 = [];
-                for(i = tempArr.length - 1; i >= 0; i--){
-                    tempArr2.push(tempArr[i]);
-                    if(tempArr[i][0] == '['){
-                        break;
+                if(tempArr[tempArr.length-1] != '[]'){
+                    let tempArr2 = [];
+                    for(let i = tempArr.length - 1; i >= 0; i--){
+                        tempArr2.push(tempArr[i]);
+                        if(tempArr[i][0] == '['){
+                            break;
+                        }
                     }
+                    tempArr2 = tempArr2.reverse();
+                    tempArr2[0] = tempArr2[0].replace('[', '');
+                    tempArr2[0] = parseInt(tempArr2[0]);
+                    tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
+                    console.log(tempArr2);
+                    cs_map.tile_map[data.y][data.x][data.z].inv = new ServerItem(tempArr2[0], tempArr2[1], tempArr2[2], '');
                 }
-                console.log(tempArr2);
-                cs_map.tile_map[data.y][data.x][data.z].inv = [];
             }
             else if(tempArr[0] == 4){ //facing
                 cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(4, tempArr[1]);
