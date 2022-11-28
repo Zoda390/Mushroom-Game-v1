@@ -5,6 +5,7 @@ var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
 var gameState = "Main_Menu"; //keeps track of what the client is currently doing
 
+var title_img;
 //create the img_maps
 var tile_img_map = [];
 var item_img_map = [];
@@ -25,6 +26,8 @@ function preload(){
     item_img_map.push(loadImage("imgs/items/water-v1.png"));
     item_img_map.push(loadImage("imgs/items/wood-v1.png"));
     item_img_map.push(loadImage("imgs/items/pickaxe.png"));
+
+    title_img = loadImage("imgs/title.png");
 }
 
 function setup(){
@@ -141,6 +144,7 @@ function draw(){
         mm_options_button.html.hide();
         mm_credits_button.html.hide();
         background(139, 176, 173);
+        image(title_img, (width/2)-580, 20);
         r_main_menu_ui();
     }
     else if(gameState == "Lobby_select"){
