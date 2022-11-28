@@ -34,7 +34,11 @@ export class ServerTileEntity extends ServerTile{
     }
 
     toStr(){
-        return this.type + '.' + this.name + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[]';
+        let invStr = "";
+        for(let i = 0; i < this.inv.length; i++){
+            invStr += this.inv[i].toStr();
+        }
+        return this.type + '.' + this.name + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[' + invStr + ']';
     }
 }
 
@@ -47,7 +51,7 @@ export class ServerItem {
     }
 
     toStr(){
-        return this.type + '.' + this.name + '.' + this.amount;
+        return this.type + '.' + this.name + '.' + this.amount + '≈';
     }
 }
 
@@ -184,7 +188,9 @@ export class ServerMap{
                     if(temp_tile_map[z][y][x] !== "0"){
                         let tempArr = temp_tile_map[z][y][x].split('.');
                         for(let i = 0; i < tempArr.length; i++){
-                            tempArr[i] = parseInt(tempArr[i]);
+                            if(parseInt(tempArr[i])+"" == tempArr[i]){
+                                tempArr[i] = parseInt(tempArr[i]);
+                            }
                         }
                         
                         //use the type to create the right tile class
@@ -195,9 +201,38 @@ export class ServerMap{
                             this.tile_map[y][x][z] = new ServerTile(2, tempArr[1]);
                         }
                         else if(tempArr[0] == 3){ //entity
-                            this.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
-                            this.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
-                            this.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                            this.tile_map[y][x][z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
+                            this.tile_map[y][x][z].move_counter = tempArr[5];
+                            this.tile_map[y][x][z].id = tempArr[2];
+                            if(tempArr[tempArr.length-1] != '[]'){
+                                let tempArr2 = [];
+                                let tempArr3 = [];
+                                var pastBracket = false;
+                                for(let i = 0; i < tempArr.length; i++){
+                                    if(tempArr[i] !== parseInt(tempArr[i])){
+                                        if(tempArr[i][0] == '['){
+                                            pastBracket = true;
+                                        }
+                                    }
+                                    if(pastBracket){
+                                        if(tempArr[i][tempArr[i].length-2] == '≈'){
+                                            tempArr3.push(tempArr[i].split('≈')[0]);
+                                            tempArr2.push(tempArr3);
+                                            tempArr3 = [tempArr[i].split('≈')[1]];
+                                        }
+                                        else{
+                                            tempArr3.push(tempArr[i]);
+                                        }
+                                        if(tempArr[i][tempArr[i].length-1] == ']'){
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempArr2[0][0] = tempArr2[0][0].replace('[', '');
+                                for(let i = 0; i < tempArr2.length; i++){
+                                    this.tile_map[y][x][z].inv[i] = new ServerItem(tempArr2[i][0], tempArr2[i][1], tempArr2[i][2], '');
+                                }
+                            }
                         }
                         else if(tempArr[0] == 4){ //facing
                             this.tile_map[y][x][z] = new ServerTile(4, tempArr[1]);

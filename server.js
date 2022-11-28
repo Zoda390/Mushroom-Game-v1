@@ -32,6 +32,10 @@ for(let i = 0; i < json_tiles.length; i++){
 tile_name_map = [...new Set(tile_name_map)];
 tile_type_map = [...new Set(tile_type_map)];
 
+item_type_map = [0, 'block', 'tool', 'consumable'];
+item_name_map = [0, 'stone', 'grass', 'water', 'wood', 'pickaxe'];
+
+
 //create the curent server map
 var cs_map = new ServerMap('unUpdated', 0, 0); //curent server map
 cs_map.fromtxt("map.txt");
@@ -80,18 +84,32 @@ io.onConnection(channel => {
                 cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
                 if(tempArr[tempArr.length-1] != '[]'){
                     let tempArr2 = [];
-                    for(let i = tempArr.length - 1; i >= 0; i--){
-                        tempArr2.push(tempArr[i]);
-                        if(tempArr[i][0] == '['){
-                            break;
+                    let tempArr3 = [];
+                    var pastBracket = false;
+                    for(let i = 0; i < tempArr.length; i++){
+                        if(tempArr[i] !== parseInt(tempArr[i])){
+                            if(tempArr[i][0] == '['){
+                                pastBracket = true;
+                            }
+                        }
+                        if(pastBracket){
+                            if(tempArr[i][tempArr[i].length-2] == '≈'){
+                                tempArr3.push(tempArr[i].split('≈')[0]);
+                                tempArr2.push(tempArr3);
+                                tempArr3 = [tempArr[i].split('≈')[1]];
+                            }
+                            else{
+                                tempArr3.push(tempArr[i]);
+                            }
+                            if(tempArr[i][tempArr[i].length-1] == ']'){
+                                break;
+                            }
                         }
                     }
-                    tempArr2 = tempArr2.reverse();
-                    tempArr2[0] = tempArr2[0].replace('[', '');
-                    tempArr2[0] = parseInt(tempArr2[0]);
-                    tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
-                    console.log(tempArr2);
-                    cs_map.tile_map[data.y][data.x][data.z].inv = new ServerItem(tempArr2[0], tempArr2[1], tempArr2[2], '');
+                    tempArr2[0][0] = tempArr2[0][0].replace('[', '');
+                    for(let i = 0; i < tempArr2.length; i++){
+                        cs_map.tile_map[data.y][data.x][data.z].inv[i] = new ServerItem(tempArr2[i][0], tempArr2[i][1], tempArr2[i][2], '');
+                    }
                 }
             }
             else if(tempArr[0] == 4){ //facing

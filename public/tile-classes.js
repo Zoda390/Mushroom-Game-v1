@@ -288,18 +288,32 @@ class ClientMap{
                             this.tile_map[y][x][z].id = tempArr[2];
                             if(tempArr[tempArr.length-1] != '[]'){
                                 let tempArr2 = [];
-                                for(let i = tempArr.length - 1; i >= 0; i--){
-                                    tempArr2.push(tempArr[i]);
-                                    if(tempArr[i][0] == '['){
-                                        break;
+                                let tempArr3 = [];
+                                var pastBracket = false;
+                                for(let i = 0; i < tempArr.length; i++){
+                                    if(tempArr[i] !== parseInt(tempArr[i])){
+                                        if(tempArr[i][0] == '['){
+                                            pastBracket = true;
+                                        }
+                                    }
+                                    if(pastBracket){
+                                        if(tempArr[i][tempArr[i].length-2] == '≈'){
+                                            tempArr3.push(tempArr[i].split('≈')[0]);
+                                            tempArr2.push(tempArr3);
+                                            tempArr3 = [tempArr[i].split('≈')[1]];
+                                        }
+                                        else{
+                                            tempArr3.push(tempArr[i]);
+                                        }
+                                        if(tempArr[i][tempArr[i].length-1] == ']'){
+                                            break;
+                                        }
                                     }
                                 }
-                                tempArr2 = tempArr2.reverse();
-                                tempArr2[0] = tempArr2[0].replace('[', '');
-                                tempArr2[0] = parseInt(tempArr2[0]);
-                                tempArr2[tempArr2.length-1] = parseInt(tempArr2[tempArr2.length-1]);
-                                console.log(tempArr2);
-                                cc_map.tile_map[data.y][data.x][data.z].inv[0] = new ClientItem(item_type_map[tempArr2[0]], item_name_map[tempArr2[1]], tempArr2[2], '');
+                                tempArr2[0][0] = tempArr2[0][0].replace('[', '');
+                                for(let i = 0; i < tempArr2.length; i++){
+                                    this.tile_map[y][x][z].inv[i] = new ClientItem(item_type_map[tempArr2[i][0]], item_name_map[tempArr2[i][1]], tempArr2[i][2], '');
+                                }
                             }
                         }
                         else if(tempArr[0] == 4){ //facing

@@ -11,7 +11,7 @@ class ClientItem{ //block
     }
 
     toStr(){
-        return find_in_array(this.type, item_type_map) + '.' + find_in_array(this.name, item_name_map) + '.' + this.amount;
+        return find_in_array(this.type, item_type_map) + '.' + find_in_array(this.name, item_name_map) + '.' + this.amount + '≈';
     }
 
     render(x, y){
