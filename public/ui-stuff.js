@@ -192,7 +192,12 @@ function s_chat_ui(){
 }
 
 function update_chat_input_txt(){
-    chat_in_txt = this.value();
+    if(this.value().length < 24){
+        chat_in_txt = this.value();
+    }
+    else{
+        this.value(this.value().substring(0, 23));
+    }
 }
 
 function send_chat_msg(){
@@ -203,7 +208,7 @@ function send_chat_msg(){
     }
 }
 
-var chat_in_txt = "hello";
+var chat_in_txt = "";
 function r_chat_ui(arr, team){
     let w = 400;
     let h = 300;
