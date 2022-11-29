@@ -39,11 +39,14 @@ function setup_ui(){
     ui.red = color(255, 0, 0);
     ui.team1 = color(232, 198, 91); //orange
     ui.team2 = color(87, 167, 214); //blue
+    ui.brown1 = color(115, 91, 66); //light brown
+    ui.brown2 = color(96, 75, 61); //dark brown
 
     s_chat_ui();
     s_main_menu_ui();
     s_lobby_select();
     s_lobby();
+    s_credits();
 }
 
 function r_name_ui(name, team){
@@ -272,8 +275,8 @@ function s_main_menu_ui(){
     mm_credits_button.html.style('background-color', '#ffffff00');
 
     mm_start_button.html.mousePressed(()=>{gameState = "Lobby_select";});
-    mm_options_button.html.mousePressed(()=>{});
-    mm_credits_button.html.mousePressed(()=>{});
+    mm_options_button.html.mousePressed(()=>{});//add options to the ui list
+    mm_credits_button.html.mousePressed(()=>{gameState = "Credits";});
 
     mm_start_button.html.hide();
     mm_options_button.html.hide();
@@ -387,5 +390,44 @@ function r_lobby(){
     text(lobby_start_button.html.elt.innerText, lobby_start_button.pos.x, lobby_start_button.pos.y-30);
     text(lobby_leave_button.html.elt.innerText, lobby_leave_button.pos.x, lobby_leave_button.pos.y-30);
     text("Lobby " + (c_lobby+1), width/2, 40);
+    pop();
+}
+
+var credits_back_button = {html: 0, pos: 0, size: {x: 400, y: 100}};
+function s_credits(){
+    credits_back_button.pos = {x: width/2, y: height-30};
+    credits_back_button.html = createButton("Leave");
+    credits_back_button.html.position(credits_back_button.pos.x - (credits_back_button.size.x/2), credits_back_button.pos.y - (credits_back_button.size.y/2));
+    credits_back_button.html.size(credits_back_button.size.x, credits_back_button.size.y);
+    credits_back_button.html.style('color', '#ffffff00');
+    credits_back_button.html.style('background-color', '#ffffff00');
+    credits_back_button.html.mousePressed(()=>{gameState = "Main_Menu";});
+    credits_back_button.html.hide();
+}
+
+function r_credits(){
+    credits_back_button.html.show();
+    push();
+    strokeWeight(ui.s_size);
+    stroke(ui.brown2);
+    fill(ui.brown1);
+    rect((width/2)-200, 20, 400, 100);
+    rect(100, 120, width-200, height-250);
+    stroke(ui.black);
+    fill(ui.gray1);
+    rect(credits_back_button.pos.x - (credits_back_button.size.x/2), credits_back_button.pos.y - (credits_back_button.size.y/2) - 30, credits_back_button.size.x, credits_back_button.size.y);
+    textSize(ui.t_size*3);
+    strokeWeight(ui.ts_size*2);
+    stroke(ui.black);
+    fill(ui.white);
+    textAlign(CENTER, CENTER);
+    text('Credits', width/2, 70);
+    text('Coding: Christian Rodriguez', (width/2), ((height-250)/5)+50);
+    text('Art: Christian Rodriguez', (width/2), (((height-250)/5)*2)+50);
+    text('Art Help: Seth Ewer', (width/2), (((height-250)/5)*3)+50);
+    text('Music: Parker Becton', (width/2), (((height-250)/5)*4)+50);
+    text('Music Help: Christian Rodriguez', (width/2), (((height-250)/5)*5)+50);
+    textSize(ui.t_size);
+    text(credits_back_button.html.elt.innerText, credits_back_button.pos.x, credits_back_button.pos.y-30);
     pop();
 }

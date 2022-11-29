@@ -143,6 +143,10 @@ function draw(){
         mm_start_button.html.hide();
         mm_options_button.html.hide();
         mm_credits_button.html.hide();
+        for(let i = 0; i < lobby_select_buttons.length; i++){
+            lobby_select_buttons[i].html.hide();
+        }
+        credits_back_button.html.hide();
         background(139, 176, 173);
         image(title_img, (width/2)-580, 20);
         r_main_menu_ui();
@@ -155,6 +159,13 @@ function draw(){
         lobby_leave_button.html.hide();
         background(139, 176, 173);
         r_lobby_select();
+    }
+    else if(gameState == "Credits"){
+        mm_start_button.html.hide();
+        mm_options_button.html.hide();
+        mm_credits_button.html.hide();
+        background(139, 176, 173);
+        r_credits();
     }
     else if(gameState == "in-Lobby"){
         for(let i = 0; i < lobby_select_buttons.length; i++){
