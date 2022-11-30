@@ -203,6 +203,8 @@ var slot4_button = 52; //4
 var lastbuildMilli = 0;
 var build_wait = 100;
 var lastChatMili = 0;
+var last_swap_mili = 0;
+var swap_wait = 150;
 
 function takeInput(){
     if(document.activeElement !== chat_input.elt){
@@ -224,17 +226,26 @@ function takeInput(){
         if (keyIsDown(move_fly_down_button) && player.z != cc_map.tile_map[0][0].length-1 && cc_map.tile_map[player.y][player.x][player.z+1] === 0 && cc_map.tile_map[player.y][player.x][player.z].type == "entity") {
             cc_map.tile_map[player.y][player.x][player.z].move(4, channel.id);
         }
-        if (keyIsDown(slot1_button)){
-            player.hand = 1;
+        if (keyIsDown(slot1_button) && millis() - last_swap_mili > swap_wait){
+            let temp = cc_map.tile_map[player.y][player.x][player.z].inv[0];
+            cc_map.tile_map[player.y][player.x][player.z].inv[0] = cc_map.tile_map[player.y][player.x][player.z].inv[2];
+            cc_map.tile_map[player.y][player.x][player.z].inv[2] = temp;
+            last_swap_mili = millis();
         }
-        if (keyIsDown(slot2_button)){
-            player.hand = 2;
+        if (keyIsDown(slot2_button) && millis() - last_swap_mili > swap_wait){
+            let temp = cc_map.tile_map[player.y][player.x][player.z].inv[1];
+            cc_map.tile_map[player.y][player.x][player.z].inv[1] = cc_map.tile_map[player.y][player.x][player.z].inv[3];
+            cc_map.tile_map[player.y][player.x][player.z].inv[3] = temp;
+            last_swap_mili = millis();
         }
-        if (keyIsDown(slot3_button)){
-            player.hand = 3;
+        if (keyIsDown(slot3_button) && millis() - last_swap_mili > swap_wait){
+            let temp = cc_map.tile_map[player.y][player.x][player.z].inv[0];
+            cc_map.tile_map[player.y][player.x][player.z].inv[0] = cc_map.tile_map[player.y][player.x][player.z].inv[1];
+            cc_map.tile_map[player.y][player.x][player.z].inv[1] = temp;
+            last_swap_mili = millis();
         }
         if (keyIsDown(slot4_button)){
-            player.hand = 5;
+            //open big inv
         }
     }
     if (keyIsDown(13) && millis()-lastChatMili > 200){ //enter
@@ -259,7 +270,7 @@ function mouseReleased() {
                         z--;
                     }
                     if(cc_map.tile_map[y][x][z].type !== "entity"){
-                        channel.emit('change', {x: x, y: y, z: z, to: 0});
+                        cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
                         lastbuildMilli = millis();
                     }
                 }
@@ -274,7 +285,7 @@ function mouseReleased() {
                         z++;
                     }
                     if(cc_map.tile_map[y][x][z].type !== "entity"){
-                        channel.emit('change', {x: x, y: y, z: z, to: "1." + player.hand});
+                        cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
                         lastbuildMilli = millis();
                     }
                 }
