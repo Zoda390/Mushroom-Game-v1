@@ -190,6 +190,8 @@ function s_chat_ui(){
     chat_input.style('left', '9px');
     chat_input.style('bottom', '30px');
     chat_input.style('width', '385px');
+    chat_input.style('outline', '0px');
+    chat_input.style('border', '0px');
     chat_input.input(update_chat_input_txt);
     chat_input.hide();
 }
