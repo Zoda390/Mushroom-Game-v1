@@ -47,6 +47,19 @@ function tokenize(sc){ //turn the string script into an array of tokens
     arr.push(";");
     lookT = lookA + 1;
   }
+  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] === "hurt"){
+    lookT += 5;
+    arr.push("hurt");
+    let lookA = lookT;
+    let temp = ""
+    while(sc[lookA] !== ";"){
+      temp += sc[lookA];
+      lookA++;
+    }
+    arr = arr.concat(temp.split(","));
+    arr.push(";");
+    lookT = lookA + 1;
+  }
   if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] + sc[lookT+4] === "place"){
     lookT += 6;
     arr.push("place");
@@ -162,7 +175,13 @@ function parse(sc){
         params = parse(sc);
         mine(params);
         sc = sc.slice(params.length+1)
-    }
+      }
+    else if(sc[0] === "hurt"){
+        sc = sc.slice(1);
+        params = parse(sc);
+        hurt(params);
+        sc = sc.slice(params.length+1)
+      }
     else if(sc[0] === "place"){
         sc = sc.slice(1);
         params = parse(sc);
@@ -330,6 +349,22 @@ function mine(params){
     else{
         console.log("mine is for survival only\nPlease use place 0");
     }
+}
+
+//hurt a block by some value
+function hurt(params){
+  let hit = params[0];
+  let x=player.x + floor(mouseX/tileSize) - 15 
+  let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
+  let z=player.z - 1;
+
+  if(params.length == 3){
+      x = params[1];
+      y = params[2];
+      z = params[3];
+  }
+
+  channel.emit('hurt', {x: x, y: y, z: z, hit: hit});
 }
 
 //change the property of a block "c_prop prop,to,x,y,z;" or "c_prop prop,to;"

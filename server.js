@@ -43,7 +43,7 @@ cs_map.save();
 
 
 var player_count = 0;
-var chat_arr = [{team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 1, txt:"Zoda2: Gay people!"}, {team: 2, txt:"Server: Gay people!"}];
+var chat_arr = [];
 //dealing with messages that the server gets
 io.onConnection(channel => {
     channel.onDisconnect(() => { //client disconnect message
@@ -55,7 +55,7 @@ io.onConnection(channel => {
         io.room(channel.roomId).emit('give_world', {str: cs_map.totxt(), name: cs_map.name});
         
         //add a player to the map
-        cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), (player_count%2), 0);
+        cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), 100, (player_count%2), 0);
         cs_map.tile_map[data.y][data.x][data.z].id = data.id;
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: cs_map.tile_map[data.y][data.x][data.z].toStr()});
         player_count++;
@@ -73,15 +73,15 @@ io.onConnection(channel => {
 
             //use the type to create the right tile class
             if(tempArr[0] == 1){ //solid
-                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(1, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(1, tempArr[1], tempArr[2]);
             }
             else if(tempArr[0] == 2){ //liquid
-                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(2, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(2, tempArr[1], tempArr[2]);
             }
             else if(tempArr[0] == 3){ //entity
-                cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[3], tempArr[4]);
-                cs_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
-                cs_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(3, tempArr[1], tempArr[2], tempArr[4], tempArr[5]);
+                cs_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[6];
+                cs_map.tile_map[data.y][data.x][data.z].id = tempArr[3];
                 if(tempArr[tempArr.length-1] != '[]'){
                     let tempArr2 = [];
                     let tempArr3 = [];
@@ -113,7 +113,7 @@ io.onConnection(channel => {
                 }
             }
             else if(tempArr[0] == 4){ //facing
-                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(4, tempArr[1]);
+                cs_map.tile_map[data.y][data.x][data.z] = new ServerTile(4, tempArr[1], tempArr[2]);
             }
             else{
                 console.log("tile type not found server side " + tempArr[0]);

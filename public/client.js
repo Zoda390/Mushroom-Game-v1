@@ -75,15 +75,15 @@ function setup(){
 
                 //use the type to create the right tile class
                 if(tempArr[0] == 1){ //solid
-                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("solid", tile_name_map[tempArr[1]], data.x, data.y, data.z);
+                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("solid", tile_name_map[tempArr[1]], tempArr[2], data.x, data.y, data.z);
                 }
                 else if(tempArr[0] == 2){ //liquid
-                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("liquid", tile_name_map[tempArr[1]], data.x, data.y, data.z);
+                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("liquid", tile_name_map[tempArr[1]], tempArr[2], data.x, data.y, data.z);
                 }
                 else if(tempArr[0] == 3){ //entity
-                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTileEntity("entity", "player", data.x, data.y, data.z, tempArr[3], tempArr[4]);
-                    cc_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[5];
-                    cc_map.tile_map[data.y][data.x][data.z].id = tempArr[2];
+                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTileEntity("entity", "player", tempArr[2], data.x, data.y, data.z, tempArr[4], tempArr[5]);
+                    cc_map.tile_map[data.y][data.x][data.z].move_counter = tempArr[6];
+                    cc_map.tile_map[data.y][data.x][data.z].id = tempArr[3];
                     if(tempArr[tempArr.length-1] != '[]'){
                         let tempArr2 = [];
                         let tempArr3 = [];
@@ -115,7 +115,7 @@ function setup(){
                     }
                 }
                 else if(tempArr[0] == 4){ //facing tile
-                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("facing", tile_name_map[tempArr[1]], data.x, data.y, data.z);
+                    cc_map.tile_map[data.y][data.x][data.z] = new ClientTile("facing", tile_name_map[tempArr[1]], tempArr[2], data.x, data.y, data.z);
                 }
                 else{
                     console.log("tile type not found client side " + tempArr[0]);

@@ -1,5 +1,4 @@
 
-var hp = 0;
 function r_all_ui(arr){
     for(let i = 0; i < arr.length; i++){
         if(arr[i] == "name_plate"){
@@ -9,8 +8,7 @@ function r_all_ui(arr){
             r_team_ui(cc_map.tile_map[player.y][player.x][player.z].team, 70, 10);
         }
         else if(arr[i] == "player_info"){
-            r_player_ui(hp);
-            if(hp<100){hp+= 0.5};
+            r_player_ui(cc_map.tile_map[player.y][player.x][player.z].hp);
         }
         else if(arr[i] == "chat_box"){
             r_chat_ui(chat_arr, cc_map.tile_map[player.y][player.x][player.z].team);

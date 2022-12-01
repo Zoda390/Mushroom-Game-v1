@@ -10,15 +10,16 @@ var tile_type_map = [0, 'solid', 'liquid', 'entity', 'facing'];
 var tile_name_map = [0, 'stone', 'grass', 'water', 'player', 'wood', 'minion', 'crystal base', 'minion log'];
 
 class ClientTile{ //a solid tile
-    constructor(type, name, x, y, z){
+    constructor(type, name, hp, x, y, z){
         this.type = type;
         this.name = name;
+        this.hp = hp;
         this.img_num = find_in_array(this.name, tile_name_map); //img found in tile_img_map
         this.pos = {x: x, y: y, z: z};
     }
 
     toStr(){
-        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map);
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.hp;
     }
 
     render(){
@@ -27,13 +28,13 @@ class ClientTile{ //a solid tile
 }
 
 class ClientTileLiquid extends ClientTile{ //an liquid tile
-    constructor(type, name, x, y, z, full){
-        super(type, name, x, y, z);
+    constructor(type, name, hp, x, y, z, full){
+        super(type, name, hp, x, y, z);
         this.full = full; //an int for how much the tile is filled, 10 is full
     }
 
     toStr(){
-        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.facing;
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.full;
     }
 
     render(){
@@ -42,13 +43,13 @@ class ClientTileLiquid extends ClientTile{ //an liquid tile
 }
 
 class ClientTileFacing extends ClientTile{ //an facing tile
-    constructor(type, name, x, y, z, facing){
-        super(type, name, x, y, z);
+    constructor(type, name, hp, x, y, z, facing){
+        super(type, name, hp, x, y, z);
         this.facing = facing; //an int for which direction the tile is facing
     }
 
     toStr(){
-        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.facing;
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.hp + '.' + this.facing;
     }
 
     render(){
@@ -57,8 +58,8 @@ class ClientTileFacing extends ClientTile{ //an facing tile
 }
 
 class ClientTileEntity extends ClientTileFacing{ //an entity tile
-    constructor(type, name, x, y, z, team, facing){
-        super(type, name, x, y, z, facing);
+    constructor(type, name, hp, x, y, z, team, facing){
+        super(type, name, hp, x, y, z, facing);
         this.team = team;
         this.move_counter = 0;
         this.walk_wait = 10; //frames before you can walk again
@@ -77,7 +78,7 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
                 //invStr += '0≈';  //fixing this makes inventory no try to move when you walk
             }
         }
-        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[' + invStr + ']';
+        return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.hp + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[' + invStr + ']';
     }
 
     render(){
@@ -159,11 +160,11 @@ class ClientMap{
             this.tile_map[y] = [];
             for(let x = 0; x < 40; x++){
                 this.tile_map[y][x] = [];
-                this.tile_map[y][x][0] = new ClientTile('solid', 'stone');
-                this.tile_map[y][x][1] = new ClientTile('liquid', 'water');
-                this.tile_map[y][x][2] = new ClientTile('solid', 'stone');
-                this.tile_map[y][x][3] = new ClientTile('solid', 'grass');
-                this.tile_map[y][x][4] = new ClientTile('solid', 'grass');
+                this.tile_map[y][x][0] = new ClientTile('solid', 'stone', 10, x, y, 0);
+                this.tile_map[y][x][1] = new ClientTile('liquid', 'water', 10, x, y, 1);
+                this.tile_map[y][x][2] = new ClientTile('solid', 'stone', 10, x, y, 2);
+                this.tile_map[y][x][3] = new ClientTile('solid', 'grass', 10, x, y, 3);
+                this.tile_map[y][x][4] = new ClientTile('solid', 'grass', 10, x, y, 4);
                 this.tile_map[y][x][5] = 0;
                 this.tile_map[y][x][6] = 0;
                 this.tile_map[y][x][7] = 0;
@@ -282,15 +283,15 @@ class ClientMap{
 
                         //use the type to create the right tile class
                         if(tempArr[0] == 1){ //solid
-                            this.tile_map[y][x][z] = new ClientTile("solid", tile_name_map[tempArr[1]], x, y, z);
+                            this.tile_map[y][x][z] = new ClientTile("solid", tile_name_map[tempArr[1]], tempArr[2], x, y, z);
                         }
                         else if(tempArr[0] == 2){ //liquid
                             this.tile_map[y][x][z] = new ClientTile("liquid", tile_name_map[tempArr[1]], x, y, z);
                         }
                         else if(tempArr[0] == 3){ //entity
-                            this.tile_map[y][x][z] = new ClientTileEntity("entity", "player", x, y, z, tempArr[3], tempArr[4]);
-                            this.tile_map[y][x][z].move_counter = tempArr[5];
-                            this.tile_map[y][x][z].id = tempArr[2];
+                            this.tile_map[y][x][z] = new ClientTileEntity("entity", "player", tempArr[2], x, y, z, tempArr[4], tempArr[5]);
+                            this.tile_map[y][x][z].move_counter = tempArr[6];
+                            this.tile_map[y][x][z].id = tempArr[3];
                             if(tempArr[tempArr.length-1] != '[]'){
                                 let tempArr2 = [];
                                 let tempArr3 = [];
@@ -322,7 +323,7 @@ class ClientMap{
                             }
                         }
                         else if(tempArr[0] == 4){ //facing
-                            this.tile_map[y][x][z] = new ClientTile("facing", tile_name_map[tempArr[1]], x, y, z);
+                            this.tile_map[y][x][z] = new ClientTile("facing", tile_name_map[tempArr[1]], tempArr[2], x, y, z);
                         }
                         else{
                             console.log("tile type not found client side " + tile_type_map[tempArr[0]]);
