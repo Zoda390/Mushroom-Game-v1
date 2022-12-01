@@ -14,7 +14,8 @@ export class ServerTile{
     constructor(type, name, hp){
         this.type = type; //int
         this.name = name; //int
-        this.hp = hp;
+        this.hp = hp; //int
+        this.drop_item = '2.1.1≈'; //str
     }
 
     toStr(){

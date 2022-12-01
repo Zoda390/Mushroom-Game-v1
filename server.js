@@ -38,7 +38,7 @@ item_name_map = [0, 'stone', 'grass', 'water', 'wood', 'pickaxe'];
 
 //create the curent server map
 var cs_map = new ServerMap('unUpdated', 0, 0); //curent server map
-//cs_map.fromtxt("map.txt");
+cs_map.fromtxt("map.txt");
 cs_map.save();
 
 
@@ -141,6 +141,7 @@ io.onConnection(channel => {
                     io.room(channel.roomId).emit('change', {x: 0, y: 0, z: 5, to: cs_map.tile_map[0][0][5].toStr()});
                     io.room(channel.roomId).emit('reset_view', {x: 0, y: 0, z: 5, id: cs_map.tile_map[data.y][data.x][data.z].id});
                 }
+                io.room(channel.roomId).emit('add_item', {id: data.id, item: cs_map.tile_map[data.y][data.x][data.z].drop_item});
                 cs_map.tile_map[data.y][data.x][data.z] = 0;
                 io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: 0});
             }

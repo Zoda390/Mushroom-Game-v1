@@ -327,8 +327,7 @@ function hurt(params){
   }
 
   if(cc_map.tile_map[y][x][z] !== undefined){
-    console.log(cc_map.tile_map[y][x][z]);
-    channel.emit('hurt', {x: x, y: y, z: z, hit: hit});
+    channel.emit('hurt', {x: x, y: y, z: z, hit: hit, id: channel.id});
   }
 }
 

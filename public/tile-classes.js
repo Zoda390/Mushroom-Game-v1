@@ -157,6 +157,40 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
             channel.emit('change', {x: this.pos.x, y: this.pos.y, z: this.pos.z, to: this.toStr()});
         }
     }
+
+    give(item){
+        //parse the str from item
+        let tempArr = item.split('.');
+        tempArr[tempArr.length-1].split('≈');
+        for(let i = 0; i < tempArr.length; i++){
+            if(parseInt(tempArr[i])+"" == tempArr[i]){
+                tempArr[i] = parseInt(tempArr[i]);
+            }
+        }
+        let temp_item = new ClientItem(item_type_map[tempArr[0]], item_name_map[tempArr[1]], tempArr[2], '');
+        let given = false;
+        if(cc_map.tile_map[player.y][player.x][player.z].inv.length === 0){
+            cc_map.tile_map[player.y][player.x][player.z].inv[0] = temp_item;
+        }
+        else if(cc_map.tile_map[player.y][player.x][player.z].inv.length < 4){
+            for(let i = 0; i < cc_map.tile_map[player.y][player.x][player.z].inv.length; i++){
+                if(cc_map.tile_map[player.y][player.x][player.z].inv[i].type == temp_item.type && cc_map.tile_map[player.y][player.x][player.z].inv[i].name == temp_item.name){
+                    cc_map.tile_map[player.y][player.x][player.z].inv[i].amount += temp_item.amount;
+                    given = true;
+                }
+            }
+            if(!given){
+                cc_map.tile_map[player.y][player.x][player.z].inv.push(temp_item);
+            }
+        }
+        else if(cc_map.tile_map[player.y][player.x][player.z].inv.length == 4){
+            for(let i = 0; i < cc_map.tile_map[player.y][player.x][player.z].inv.length; i++){
+                if(cc_map.tile_map[player.y][player.x][player.z].inv[i].type == temp_item.type && cc_map.tile_map[player.y][player.x][player.z].inv[i].name == temp_item.name){
+                    cc_map.tile_map[player.y][player.x][player.z].inv[i].amount += temp_item.amount;
+                }
+            }
+        }
+    }
 }
 
 class ClientMap{

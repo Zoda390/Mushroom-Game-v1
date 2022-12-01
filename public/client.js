@@ -150,6 +150,12 @@ function setup(){
             }
         })
 
+        channel.on('add_item', data => {
+            if(data.id === channel.id){
+                cc_map.tile_map[player.y][player.x][player.z].give(data.item);
+            }
+        })
+
         channel.on('msg', data => {
             chat_arr.push(data);
             if(chat_arr.length > 12){

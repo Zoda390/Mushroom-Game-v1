@@ -24,6 +24,12 @@ class ClientItem{ //block
         push();
         imageMode(CENTER);
         image(item_img_map[this.img_num], x, y);
+        if(this.amount > 1){
+            fill(ui.white);
+            textSize(ui.textSize);
+            let tempS =this.amount + '';
+            text(this.amount, x+(tileSize*(0.3))-(9 * (tempS.length-1)), y+(tileSize*(0.2)));
+        }
         pop();
     }
 
@@ -31,7 +37,8 @@ class ClientItem{ //block
         let txtinput = this.click;
         txtinput = txtinput + x + ',' + y + ',' + z + ';';
         let script = tokenize(txtinput);
-        if(parse(script) == 'placed'){
+        let ret = parse(script);
+        if(ret == 'placed'){
             this.amount -= 1;
             if(this.amount <= 0){
                 console.log(cc_map.tile_map[player.y][player.x][player.z].inv);
