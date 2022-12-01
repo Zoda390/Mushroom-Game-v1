@@ -181,7 +181,7 @@ function r_player_ui(p_hp){
 }
 
 var chat_input;
-var chat_arr = [{team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 0, txt:"Zoda: Gay people!"}, {team: 1, txt:"Zoda2: Gay people!"}, {team: 2, txt:"Server: Gay people!"}];
+var chat_arr = [];
 function s_chat_ui(){
     chat_input = createInput();
     chat_input.style('color', '#ffffff00');
