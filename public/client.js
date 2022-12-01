@@ -1,7 +1,7 @@
 var channel; //gecko server
 var cc_map; //curent client map
 var tileSize = 64; //rendered size of tiles
-var player = {x: 0, y: 0, z: 5, hand: 1, id: 0, team: 0, hp: 100}; //a quickhand for player info
+var player = {x: 0, y: 0, z: 5, hand: 1, id: 0, team: 0, hp: 100, mode: 's'}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
 var gameState = "Main_Menu"; //keeps track of what the client is currently doing
 

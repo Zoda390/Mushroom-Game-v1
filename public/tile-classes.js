@@ -24,6 +24,16 @@ class ClientTile{ //a solid tile
 
     render(){
         image(tile_img_map[this.img_num][0], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        if(this.hp < 10){
+            push();
+            stroke(0, ((10-this.hp)/10) * 255);
+            strokeWeight(3);
+            line((this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - ((this.pos.z-1) * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - ((this.pos.z-1) * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2));
+            pop();
+        }
     }
 }
 

@@ -34,19 +34,6 @@ function tokenize(sc){ //turn the string script into an array of tokens
   let arr = []; //this will become the new sc
   //arr = arr.concat(checkToken("sq", sc));
   //arr = arr.concat(checkToken("cr", sc));
-  if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] === "mine"){
-    lookT += 5;
-    arr.push("mine");
-    let lookA = lookT;
-    let temp = ""
-    while(sc[lookA] !== ";"){
-      temp += sc[lookA];
-      lookA++;
-    }
-    arr = arr.concat(temp.split(","));
-    arr.push(";");
-    lookT = lookA + 1;
-  }
   if(sc[lookT] + sc[lookT+1] + sc[lookT+2] + sc[lookT+3] === "hurt"){
     lookT += 5;
     arr.push("hurt");
@@ -170,12 +157,6 @@ function parse(sc){
       }
       sc = sc.slice(1);
     }
-    else if(sc[0] === "mine"){
-        sc = sc.slice(1);
-        params = parse(sc);
-        mine(params);
-        sc = sc.slice(params.length+1)
-      }
     else if(sc[0] === "hurt"){
         sc = sc.slice(1);
         params = parse(sc);
@@ -185,7 +166,10 @@ function parse(sc){
     else if(sc[0] === "place"){
         sc = sc.slice(1);
         params = parse(sc);
-        place(params);
+        
+        if(place(params) === 'placed' && player.mode == 's'){
+          return 'placed';
+        }
         sc = sc.slice(params.length+1)
     }
     else if(sc[0] === "s_mode"){
@@ -284,7 +268,7 @@ function parse(sc){
 
 //place a block "place tileID,x,y,z;" or "place tileID;"
 function place(params){
-    let mode = cc_map.mode; //s for survival, L for level-editing
+    let mode = player.mode; //s for survival, L for level-editing
 
     let tileID = params[0];
     let x=player.x + floor(mouseX/tileSize) - 15 
@@ -309,50 +293,11 @@ function place(params){
       }
     }
     
-    if(mode == "s"){
-        //take item from inv
-    }
-
-    if(tileID == 0 && mode != "s"){
-        channel.emit('change', {x: x, y: y, z: z, to: 0});
-    }
-    else{
-        if(tileID == 0){
-            console.log("place 0, doesnt work in survival\nPlease use mine");
-        }
-        else{
-            channel.emit('change', {x: x, y: y, z: z, to: ("1."+tileID+".10")});
-        }
-    }
-}
-
-//place an air block and add that block to the players inventory "mine x,y,z;" or "mine;"
-function mine(params){
-    let mode = cc_map.mode; //s for survival, L for level-editing
-
-    let x=player.x + floor(mouseX/tileSize) - 15 
-    let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
-    let z=player.z - 1;
-
-    if(params.length == 3){
-        x = params[0];
-        y = params[1];
-        z = params[2];
-    }
-    else if(params.length == 2){
-        x = params[0];
-        y = params[1];
-    }
-    else if(params.length == 1){
-        console.log("If you give mine an x, you need to give it a y.");
-    }
-
-    if(mode == "s"){
-        channel.emit('change', {x: x, y: y, z: z, to: 0});
-        //add item to inv
-    }
-    else{
-        console.log("mine is for survival only\nPlease use place 0");
+    if(cc_map.tile_map[y][x][z] === 0){
+      channel.emit('change', {x: x, y: y, z: z, to: ("1."+tileID+".10")});
+      if(mode == "s"){
+        return 'placed'; //this is so the item that calls this knows to take away 1 from amount
+      }
     }
 }
 
@@ -370,6 +315,7 @@ function hurt(params){
   }
   
   if(z==-1){
+    z = player.z;
     if(keyIsDown(run_button)){
       z = player.z + 1;
     }
@@ -380,7 +326,10 @@ function hurt(params){
     }
   }
 
-  channel.emit('hurt', {x: x, y: y, z: z, hit: hit});
+  if(cc_map.tile_map[y][x][z] !== undefined){
+    console.log(cc_map.tile_map[y][x][z]);
+    channel.emit('hurt', {x: x, y: y, z: z, hit: hit});
+  }
 }
 
 //change the property of a block "c_prop prop,to,x,y,z;" or "c_prop prop,to;"

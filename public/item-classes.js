@@ -31,6 +31,16 @@ class ClientItem{ //block
         let txtinput = this.click;
         txtinput = txtinput + x + ',' + y + ',' + z + ';';
         let script = tokenize(txtinput);
-        parse(script);
+        if(parse(script) == 'placed'){
+            this.amount -= 1;
+            if(this.amount <= 0){
+                console.log(cc_map.tile_map[player.y][player.x][player.z].inv);
+                for(let i = 0; i < cc_map.tile_map[player.y][player.x][player.z].inv.length; i++){
+                    if(cc_map.tile_map[player.y][player.x][player.z].inv[i].amount <= 0){
+                        cc_map.tile_map[player.y][player.x][player.z].inv[i] = undefined;
+                    }
+                }
+            }
+        }
     }
 }
