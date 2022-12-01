@@ -285,36 +285,19 @@ function mouseReleased() {
         if(millis() - lastbuildMilli > build_wait){
             let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
             let x = player.x + floor(mouseX/tileSize) - 15;
-            let z = player.z;
+            let z = -1;
     
-            if(mouseButton == LEFT){ //mine
-                if(keyIsDown(run_button)){
-                    z = player.z + 1;
+            if(mouseButton == LEFT){ //left click
+                if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
+                    cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
                 }
-                if(cc_map.tile_map[y][x][z] !== undefined){
-                    if(cc_map.tile_map[y][x][z] == 0){
-                        z--;
-                    }
-                    if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
-                        cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
-                    }
-                    lastbuildMilli = millis();
-                }
+                lastbuildMilli = millis();
             }
-            else{  //build
-                z = player.z-1;
-                if(keyIsDown(run_button)){
-                    z = player.z;
+            else{  //right click
+                if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
+                    cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
                 }
-                if(cc_map.tile_map[y][x][z] !== undefined){
-                    if(cc_map.tile_map[y][x][z] != 0){
-                        z++;
-                    }
-                    if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
-                        cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
-                    }
-                    lastbuildMilli = millis();
-                }
+                lastbuildMilli = millis();
             }
         }
     }

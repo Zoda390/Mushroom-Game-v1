@@ -100,11 +100,6 @@ export class ServerMap{
             for(let y = 0; y < this.tile_map.length; y++){
                 for(let x = 0; x < this.tile_map[y].length; x++){
                     if(this.tile_map[y][x][z] !== 0){
-                        /* second player map break test
-                        if(this.tile_map[y][x][z].type == 3){
-                            console.log(this.tile_map[y][x][z].toStr())
-                        }
-                        */
                         temp += this.tile_map[y][x][z].toStr() + "~";
                     }
                     else{
@@ -248,7 +243,7 @@ export class ServerMap{
                             this.tile_map[y][x][z] = new ServerTile(4, tempArr[1]. tempArr[2]);
                         }
                         else{
-                            console.log("tile type not found server side " + tempArr[0]);
+                            console.log("251: tile type not found server side " + tempArr[0]);
                         }
                     }
                     else{

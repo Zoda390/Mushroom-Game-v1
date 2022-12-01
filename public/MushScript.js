@@ -296,12 +296,17 @@ function place(params){
         y = params[2];
         z = params[3];
     }
-    else if(params.length == 3){
-        x = params[1];
-        y = params[2];
-    }
-    else if(params.length == 2){
-        console.log("If you give place an x, you need to give it a y.");
+    
+    if(z==-1){
+      z = player.z-1;
+      if(keyIsDown(run_button)){
+        z = player.z;
+      }
+      if(cc_map.tile_map[y][x][z] !== undefined){
+        if(cc_map.tile_map[y][x][z] != 0){
+          z++;
+        }
+      }
     }
     
     if(mode == "s"){
@@ -359,9 +364,20 @@ function hurt(params){
   let z=player.z - 1;
 
   if(params.length == 4){
-      x = params[1];
-      y = params[2];
-      z = params[3];
+    x = params[1];
+    y = params[2];
+    z = params[3];
+  }
+  
+  if(z==-1){
+    if(keyIsDown(run_button)){
+      z = player.z + 1;
+    }
+    if(cc_map.tile_map[y][x][z] !== undefined){
+        if(cc_map.tile_map[y][x][z] == 0){
+            z--;
+        }
+    }
   }
 
   channel.emit('hurt', {x: x, y: y, z: z, hit: hit});
