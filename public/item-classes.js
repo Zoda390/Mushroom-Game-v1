@@ -7,7 +7,13 @@ class ClientItem{ //block
         this.name = name;
         this.img_num = find_in_array(this.name, item_name_map); //img found in tile_img_map
         this.amount = amount;
-        this.click = click;
+        this.click = 'place ' + find_in_array(this.name, item_name_map) + ',';
+        if(this.name == 'pickaxe'){
+            this.click = 'mine ';
+        }
+        if(click !== ''){
+            this.click = click;
+        }
     }
 
     toStr(){
@@ -21,8 +27,10 @@ class ClientItem{ //block
         pop();
     }
 
-    clicked(){
+    clicked(x, y, z){
         let txtinput = this.click;
+        txtinput = txtinput + x + ',' + y + ',' + z + ';';
+        console.log(txtinput);
         let script = tokenize(txtinput);
         parse(script);
     }

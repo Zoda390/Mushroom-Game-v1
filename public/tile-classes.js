@@ -70,7 +70,12 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
     toStr(){
         let invStr = "";
         for(let i = 0; i < this.inv.length; i++){
-            invStr += this.inv[i].toStr();
+            if(this.inv[i] !== undefined){
+                invStr += this.inv[i].toStr();
+            }
+            else{
+                //invStr += '0≈';  //fixing this makes inventory no try to move when you walk
+            }
         }
         return find_in_array(this.type, tile_type_map) + '.' + find_in_array(this.name, tile_name_map) + '.' + this.id + '.' + this.team + '.' + this.facing + '.' + this.move_counter + '.[' + invStr + ']';
     }

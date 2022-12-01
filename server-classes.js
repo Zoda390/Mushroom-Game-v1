@@ -42,12 +42,21 @@ export class ServerTileEntity extends ServerTile{
     }
 }
 
+var item_type_map = [0, 'block', 'tool', 'consumable'];
+var item_name_map = [0, 'stone', 'grass', 'water', 'wood', 'pickaxe'];
+
 export class ServerItem {
     constructor(type, name, amount, click){
         this.type = type;
         this.name = name;
         this.amount = amount;
-        this.click = click;
+        this.click = 'Place ' + find_in_array(this.name, item_name_map) + ';';
+        if(this.name == 'Pickaxe'){
+            this.click = 'Mine;';
+        }
+        if(click !== ''){
+            this.click = click;
+        }
     }
 
     toStr(){
