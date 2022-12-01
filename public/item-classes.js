@@ -9,7 +9,7 @@ class ClientItem{ //block
         this.amount = amount;
         this.click = 'place ' + find_in_array(this.name, item_name_map) + ',';
         if(this.name == 'pickaxe'){
-            this.click = 'mine ';
+            this.click = 'hurt 1,';
         }
         if(click !== ''){
             this.click = click;
@@ -30,7 +30,6 @@ class ClientItem{ //block
     clicked(x, y, z){
         let txtinput = this.click;
         txtinput = txtinput + x + ',' + y + ',' + z + ';';
-        console.log(txtinput);
         let script = tokenize(txtinput);
         parse(script);
     }

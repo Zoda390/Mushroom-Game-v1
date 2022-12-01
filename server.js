@@ -128,6 +128,25 @@ io.onConnection(channel => {
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: data.to});
     })
 
+    channel.on('hurt', data => {
+        if(cs_map.tile_map[data.y][data.x][data.z] != 0){
+            cs_map.tile_map[data.y][data.x][data.z].hp -= data.hit;
+            if(cs_map.tile_map[data.y][data.x][data.z].hp>0){
+                io.room(channel.roomId).emit('hurt', {x: data.x, y: data.y, z: data.z, hit: data.hit});
+            }
+            else{
+                if(cs_map.tile_map[data.y][data.x][data.z].id != undefined){
+                    cs_map.tile_map[0][0][5] = new ServerTileEntity(3, 4, 100, cs_map.tile_map[data.y][data.x][data.z].team, 0);
+                    cs_map.tile_map[0][0][5].id = cs_map.tile_map[data.y][data.x][data.z].id;
+                    io.room(channel.roomId).emit('change', {x: 0, y: 0, z: 5, to: cs_map.tile_map[0][0][5].toStr()});
+                    io.room(channel.roomId).emit('reset_view', {x: 0, y: 0, z: 5, id: cs_map.tile_map[data.y][data.x][data.z].id});
+                }
+                cs_map.tile_map[data.y][data.x][data.z] = 0;
+                io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: 0});
+            }
+        }
+    })
+
     channel.on('msg', data => {
         chat_arr.push(data);
         io.room(channel.roomId).emit('msg', data);

@@ -1,7 +1,7 @@
 var channel; //gecko server
 var cc_map; //curent client map
 var tileSize = 64; //rendered size of tiles
-var player = {x: 0, y: 0, z: 5, hand: 1, id: 0}; //a quickhand for player info
+var player = {x: 0, y: 0, z: 5, hand: 1, id: 0, team: 0, hp: 100}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
 var gameState = "Main_Menu"; //keeps track of what the client is currently doing
 
@@ -123,6 +123,30 @@ function setup(){
             }
             else{ //air tile
                 cc_map.tile_map[data.y][data.x][data.z] = 0;
+            }
+        })
+
+        channel.on('hurt', data => {
+            cc_map.tile_map[data.y][data.x][data.z].hp -= data.hit;
+            /*if(data.x === player.x && data.y === player.y && data.z === player.z){
+                player.hp -= data.hit;
+                console.log(player.hp);
+                if(player.hp <= 0){
+                    channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
+                    player.x = 0;
+                    player.y = 0;
+                    player.z = 5;
+                    player.hp = 100;
+                    channel.emit('change', {x: player.x, y: player.y, z: player.z, to: '3.4.100.'+channel.id+'.'+player.team+'.0.0.[]'});
+                }
+            }*/
+        })
+
+        channel.on('reset_view', data => {
+            if(data.id === channel.id){
+                player.x = data.x;
+                player.y = data.y;
+                player.z = data.z;
             }
         })
 
@@ -271,12 +295,10 @@ function mouseReleased() {
                     if(cc_map.tile_map[y][x][z] == 0){
                         z--;
                     }
-                    if(cc_map.tile_map[y][x][z].type !== "entity"){
-                        if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
-                            cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
-                        }
-                        lastbuildMilli = millis();
+                    if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
+                        cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
                     }
+                    lastbuildMilli = millis();
                 }
             }
             else{  //build
@@ -288,12 +310,10 @@ function mouseReleased() {
                     if(cc_map.tile_map[y][x][z] != 0){
                         z++;
                     }
-                    if(cc_map.tile_map[y][x][z].type !== "entity"){
-                        if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
-                            cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
-                        }
-                        lastbuildMilli = millis();
+                    if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
+                        cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
                     }
+                    lastbuildMilli = millis();
                 }
             }
         }

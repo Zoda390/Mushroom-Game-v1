@@ -316,7 +316,7 @@ function place(params){
             console.log("place 0, doesnt work in survival\nPlease use mine");
         }
         else{
-            channel.emit('change', {x: x, y: y, z: z, to: ("1."+tileID)});
+            channel.emit('change', {x: x, y: y, z: z, to: ("1."+tileID+".10")});
         }
     }
 }
@@ -358,7 +358,7 @@ function hurt(params){
   let y=player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0)
   let z=player.z - 1;
 
-  if(params.length == 3){
+  if(params.length == 4){
       x = params[1];
       y = params[2];
       z = params[3];
