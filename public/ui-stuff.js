@@ -250,23 +250,30 @@ function r_chat_ui(arr, team){
 var mm_start_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_options_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_credits_button = {html: 0, pos:0, size: {x: 400, y: 100}};
+var mm_name_input = {html: 0, pos:0, size:{x: 400, y: 50}};
 function s_main_menu_ui(){
-    mm_start_button.pos = {x: width/2, y: (height/2)+100};
-    mm_options_button.pos = {x: width/2, y: (height/2)+210};
-    mm_credits_button.pos = {x: width/2, y: (height/2)+320};
+    mm_name_input.pos = {x: width/2, y: (height/2)+100};
+    mm_start_button.pos = {x: width/2, y: (height/2)+170};
+    mm_options_button.pos = {x: width/2, y: (height/2)+280};
+    mm_credits_button.pos = {x: width/2, y: (height/2)+390};
 
+    mm_name_input.html = createInput();
     mm_start_button.html = createButton("Start");
     mm_options_button.html = createButton("Options");
     mm_credits_button.html = createButton("Credits");
 
+    mm_name_input.html.position(mm_name_input.pos.x - (mm_name_input.size.x/2), mm_name_input.pos.y - (mm_name_input.size.y));
     mm_start_button.html.position(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2));
     mm_options_button.html.position(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2));
     mm_credits_button.html.position(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2));
     
+    mm_name_input.html.size(mm_name_input.size.x, mm_name_input.size.y);
     mm_start_button.html.size(mm_start_button.size.x, mm_start_button.size.y);
     mm_options_button.html.size(mm_options_button.size.x, mm_options_button.size.y);
     mm_credits_button.html.size(mm_credits_button.size.x, mm_credits_button.size.y);
 
+    mm_name_input.html.style('color', '#0');
+    mm_name_input.html.style('background-color', '#ffffff00');
     mm_start_button.html.style('color', '#ffffff00');
     mm_start_button.html.style('background-color', '#ffffff00');
     mm_options_button.html.style('color', '#ffffff00');
@@ -278,12 +285,14 @@ function s_main_menu_ui(){
     mm_options_button.html.mousePressed(()=>{});//add options to the ui list
     mm_credits_button.html.mousePressed(()=>{gameState = "Credits";});
 
+    mm_name_input.html.hide();
     mm_start_button.html.hide();
     mm_options_button.html.hide();
     mm_credits_button.html.hide();
 }
 
 function r_main_menu_ui(){
+    mm_name_input.html.show();
     mm_start_button.html.show();
     mm_options_button.html.show();
     mm_credits_button.html.show();
