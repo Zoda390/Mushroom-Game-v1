@@ -140,9 +140,6 @@ function setup(){
 
 function draw(){
     if(gameState == "Main_Menu"){
-        mm_start_button.html.hide();
-        mm_options_button.html.hide();
-        mm_credits_button.html.hide();
         for(let i = 0; i < lobby_select_buttons.length; i++){
             lobby_select_buttons[i].html.hide();
         }
@@ -175,6 +172,11 @@ function draw(){
         r_lobby();
     }
     else if(gameState == "game"){
+        //take out when lobby select is re-implimented
+        mm_start_button.html.hide();
+        mm_options_button.html.hide();
+        mm_credits_button.html.hide();
+
         lobby_start_button.html.hide();
         lobby_leave_button.html.hide();
         background(139, 176, 173);
@@ -242,7 +244,7 @@ function takeInput(){
 }
 
 function mouseReleased() {
-    if(gameState == "game"){
+    if(gameState == "game" && cc_map !== undefined){
         if(millis() - lastbuildMilli > build_wait){
             let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
             let x = player.x + floor(mouseX/tileSize) - 15;

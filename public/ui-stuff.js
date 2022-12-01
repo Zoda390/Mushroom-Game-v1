@@ -274,7 +274,7 @@ function s_main_menu_ui(){
     mm_credits_button.html.style('color', '#ffffff00');
     mm_credits_button.html.style('background-color', '#ffffff00');
 
-    mm_start_button.html.mousePressed(()=>{gameState = "Lobby_select";});
+    mm_start_button.html.mousePressed(()=>{gameState = "game";});
     mm_options_button.html.mousePressed(()=>{});//add options to the ui list
     mm_credits_button.html.mousePressed(()=>{gameState = "Credits";});
 
