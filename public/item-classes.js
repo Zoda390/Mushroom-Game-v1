@@ -11,6 +11,9 @@ class ClientItem{ //block
         if(this.name == 'pickaxe'){
             this.click = 'hurt 1,';
         }
+        if(this.name == 'wood'){
+            this.click = 'place 5,';
+        }
         if(click !== ''){
             this.click = click;
         }

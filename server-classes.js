@@ -1,5 +1,8 @@
 import fs from 'fs'
 
+var tile_name_map = [0, 'stone', 'grass', 'water', 'player','wood', 'log', 'crystal base', 'minion log'];
+var tile_type_map = [ 0, 'solid', 'liquid', 'entity', 'facing'];
+
 //Mostly for searching the name and type maps
 export function find_in_array(input, arr){
     for(let i = 0; i < arr.length; i++){
@@ -15,7 +18,16 @@ export class ServerTile{
         this.type = type; //int
         this.name = name; //int
         this.hp = hp; //int
-        this.drop_item = '2.1.1≈'; //str
+        if(find_in_array(tile_name_map[this.name], item_name_map) !== undefined){
+            this.drop_item = '1.'+find_in_array(tile_name_map[this.name], item_name_map)+'.1≈'; //str
+        }
+        else if(this.type == 3){
+            this.drop_item = '2.5.1≈';
+        }
+        else{
+            this.drop_item = 0;
+        }
+
     }
 
     toStr(){
@@ -77,7 +89,7 @@ export class ServerMap{
             for(let x = 0; x < 40; x++){
                 this.tile_map[y][x] = [];
                 this.tile_map[y][x][0] = new ServerTile(1, 1, 10); //stone
-                this.tile_map[y][x][1] = new ServerTile(2, 3, 10); //water
+                this.tile_map[y][x][1] = new ServerTile(1, 3, 10); //water
                 this.tile_map[y][x][2] = new ServerTile(1, 1, 10); //stone
                 this.tile_map[y][x][3] = new ServerTile(1, 2, 10); //grass
                 this.tile_map[y][x][4] = new ServerTile(1, 2, 10); //grass

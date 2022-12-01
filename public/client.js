@@ -110,7 +110,7 @@ function setup(){
                         }
                         tempArr2[0][0] = tempArr2[0][0].replace('[', '');
                         for(let i = 0; i < tempArr2.length; i++){
-                            cc_map.tile_map[data.y][data.x][data.z].inv[i] = new ClientItem(item_type_map[tempArr2[i][0]], item_name_map[tempArr2[i][1]], tempArr2[i][2], '');
+                            cc_map.tile_map[data.y][data.x][data.z].inv[i] = new ClientItem(item_type_map[tempArr2[i][0]], item_name_map[tempArr2[i][1]], parseInt(tempArr2[i][2]), '');
                         }
                     }
                 }
@@ -212,7 +212,7 @@ function draw(){
         background(139, 176, 173);
         if(cc_map != undefined){ //only draw the map if the map exists
             cc_map.render();
-            r_all_ui(["name_plate", "team_info", "player_info", "chat_box"]);
+            r_all_ui(["name_plate", "player_info", "chat_box"]);
             takeInput();
         }
     }

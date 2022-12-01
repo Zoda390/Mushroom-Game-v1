@@ -40,7 +40,7 @@ class ClientTile{ //a solid tile
 class ClientTileLiquid extends ClientTile{ //an liquid tile
     constructor(type, name, hp, x, y, z, full){
         super(type, name, hp, x, y, z);
-        this.full = full; //an int for how much the tile is filled, 10 is full
+        this.full = 10; //an int for how much the tile is filled, 10 is full
     }
 
     toStr(){
@@ -48,7 +48,18 @@ class ClientTileLiquid extends ClientTile{ //an liquid tile
     }
 
     render(){
-        image(tile_img_map[this.img_num][this.full], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        console.log('water');
+        image(tile_img_map[3][0], (this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), tileSize, tileSize + (tileSize/2));
+        if(this.hp < 10){
+            push();
+            stroke(0, ((10-this.hp)/10) * 255);
+            strokeWeight(3);
+            line((this.pos.x*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), (this.pos.y*tileSize) - (this.pos.z * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - ((this.pos.z-1) * tileSize/2));
+            line((this.pos.x*tileSize), ((this.pos.y+1)*tileSize) - ((this.pos.z-1) * tileSize/2), ((this.pos.x+1)*tileSize), ((this.pos.y+1)*tileSize) - (this.pos.z * tileSize/2));
+            pop();
+        }
     }
 }
 
@@ -161,12 +172,13 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
     give(item){
         //parse the str from item
         let tempArr = item.split('.');
-        tempArr[tempArr.length-1].split('≈');
+        tempArr[tempArr.length-1] = tempArr[tempArr.length-1].split('≈')[0];
         for(let i = 0; i < tempArr.length; i++){
             if(parseInt(tempArr[i])+"" == tempArr[i]){
                 tempArr[i] = parseInt(tempArr[i]);
             }
         }
+        console.log(tempArr);
         let temp_item = new ClientItem(item_type_map[tempArr[0]], item_name_map[tempArr[1]], tempArr[2], '');
         let given = false;
         if(cc_map.tile_map[player.y][player.x][player.z].inv.length === 0){
@@ -186,7 +198,7 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
         else if(cc_map.tile_map[player.y][player.x][player.z].inv.length == 4){
             for(let i = 0; i < cc_map.tile_map[player.y][player.x][player.z].inv.length; i++){
                 if(cc_map.tile_map[player.y][player.x][player.z].inv[i].type == temp_item.type && cc_map.tile_map[player.y][player.x][player.z].inv[i].name == temp_item.name){
-                    cc_map.tile_map[player.y][player.x][player.z].inv[i].amount += temp_item.amount;
+                    cc_map.tile_map[player.y][player.x][player.z].inv[i].amount += parseInt(temp_item.amount);
                 }
             }
         }
@@ -205,7 +217,7 @@ class ClientMap{
             for(let x = 0; x < 40; x++){
                 this.tile_map[y][x] = [];
                 this.tile_map[y][x][0] = new ClientTile('solid', 'stone', 10, x, y, 0);
-                this.tile_map[y][x][1] = new ClientTile('liquid', 'water', 10, x, y, 1);
+                this.tile_map[y][x][1] = new ClientTile('solid', 'water', 10, x, y, 1);
                 this.tile_map[y][x][2] = new ClientTile('solid', 'stone', 10, x, y, 2);
                 this.tile_map[y][x][3] = new ClientTile('solid', 'grass', 10, x, y, 3);
                 this.tile_map[y][x][4] = new ClientTile('solid', 'grass', 10, x, y, 4);
