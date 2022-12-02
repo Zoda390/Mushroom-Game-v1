@@ -2,7 +2,7 @@
 function r_all_ui(arr){
     for(let i = 0; i < arr.length; i++){
         if(arr[i] == "name_plate"){
-            r_name_ui("Zoda390", cc_map.tile_map[player.y][player.x][player.z].team);
+            r_name_ui(username, cc_map.tile_map[player.y][player.x][player.z].team);
         }
         else if(arr[i] == "team_info"){
             r_team_ui(cc_map.tile_map[player.y][player.x][player.z].team, 70, 10);
@@ -195,17 +195,17 @@ function s_chat_ui(){
 }
 
 function update_chat_input_txt(){
-    if(this.value().length < 24){
+    if(this.value().length < 37-username.length){
         chat_in_txt = this.value();
     }
     else{
-        this.value(this.value().substring(0, 23));
+        this.value(this.value().substring(0, 36-username.length));
     }
 }
 
 function send_chat_msg(){
     if(chat_in_txt.length > 0){
-        channel.emit('msg', {team: cc_map.tile_map[player.y][player.x][player.z].team, txt: ("Zoda390: " + chat_in_txt)})
+        channel.emit('msg', {team: cc_map.tile_map[player.y][player.x][player.z].team, txt: (username + ': ' + chat_in_txt)})
         chat_in_txt = "";
         chat_input.value('');
     }
@@ -222,8 +222,12 @@ function r_chat_ui(arr, team){
     stroke(ui.black);
     strokeWeight(ui.s_size);
     fill(ui.gray1);
-    rect(x, y, w-50, h-28)
+    rect(x, y, w-50, h-28);
+    if(document.activeElement === chat_input.elt){
+        stroke(ui.white);
+    }
     rect(x, y+(h-28), w, 28);
+    stroke(ui.black);
     if(chat_in_txt.length > 0){
         if(team == 0){fill(ui.team1);}
         else{fill(ui.team2);}
@@ -247,10 +251,10 @@ function r_chat_ui(arr, team){
     pop();
 }
 
+var mm_name_input = {html: 0, pos:0, size:{x: 400, y: 50}};
 var mm_start_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_options_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_credits_button = {html: 0, pos:0, size: {x: 400, y: 100}};
-var mm_name_input = {html: 0, pos:0, size:{x: 400, y: 50}};
 function s_main_menu_ui(){
     mm_name_input.pos = {x: width/2, y: (height/2)+100};
     mm_start_button.pos = {x: width/2, y: (height/2)+170};
@@ -262,7 +266,7 @@ function s_main_menu_ui(){
     mm_options_button.html = createButton("Options");
     mm_credits_button.html = createButton("Credits");
 
-    mm_name_input.html.position(mm_name_input.pos.x - (mm_name_input.size.x/2), mm_name_input.pos.y - (mm_name_input.size.y));
+    mm_name_input.html.position(mm_name_input.pos.x - (mm_name_input.size.x/2)-5, mm_name_input.pos.y - (mm_name_input.size.y));
     mm_start_button.html.position(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2));
     mm_options_button.html.position(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2));
     mm_credits_button.html.position(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2));
@@ -272,8 +276,11 @@ function s_main_menu_ui(){
     mm_options_button.html.size(mm_options_button.size.x, mm_options_button.size.y);
     mm_credits_button.html.size(mm_credits_button.size.x, mm_credits_button.size.y);
 
-    mm_name_input.html.style('color', '#0');
+    mm_name_input.html.style('color', '#ffffff00');
     mm_name_input.html.style('background-color', '#ffffff00');
+    mm_name_input.html.style('font-size', '50px');
+    mm_name_input.html.style('outline', '0px');
+    mm_name_input.html.style('border', '0px');
     mm_start_button.html.style('color', '#ffffff00');
     mm_start_button.html.style('background-color', '#ffffff00');
     mm_options_button.html.style('color', '#ffffff00');
@@ -281,7 +288,8 @@ function s_main_menu_ui(){
     mm_credits_button.html.style('color', '#ffffff00');
     mm_credits_button.html.style('background-color', '#ffffff00');
 
-    mm_start_button.html.mousePressed(()=>{gameState = "game";});
+    mm_name_input.html.input(update_name_input);
+    mm_start_button.html.mousePressed(()=>{if(username.length >= 1){gameState = "game";}});
     mm_options_button.html.mousePressed(()=>{});//add options to the ui list
     mm_credits_button.html.mousePressed(()=>{gameState = "Credits";});
 
@@ -289,6 +297,16 @@ function s_main_menu_ui(){
     mm_start_button.html.hide();
     mm_options_button.html.hide();
     mm_credits_button.html.hide();
+}
+
+var username = '';
+function update_name_input(){
+    if(this.value().length < 14){
+        username = this.value();
+    }
+    else{
+        this.value(this.value().substring(0, 13));
+    }
 }
 
 function r_main_menu_ui(){
@@ -303,10 +321,16 @@ function r_main_menu_ui(){
     rect(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2)- 30, mm_start_button.size.x, mm_start_button.size.y);
     rect(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2)- 30, mm_options_button.size.x, mm_options_button.size.y);
     rect(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2)- 30, mm_credits_button.size.x, mm_credits_button.size.y);
+    if(document.activeElement === mm_name_input.html.elt){
+        stroke(ui.white);
+    }
+    rect(mm_name_input.pos.x - (mm_name_input.size.x/2), mm_name_input.pos.y - mm_name_input.size.y- 30, mm_name_input.size.x, mm_name_input.size.y);
     textSize(ui.t_size);
+    stroke(ui.black);
     strokeWeight(ui.ts_size);
     fill(ui.white);
     textAlign(CENTER, CENTER);
+    text(username, mm_name_input.pos.x, mm_name_input.pos.y-52.5);
     text(mm_start_button.html.elt.innerText, mm_start_button.pos.x, mm_start_button.pos.y-30);
     text(mm_options_button.html.elt.innerText, mm_options_button.pos.x, mm_options_button.pos.y-30);
     text(mm_credits_button.html.elt.innerText, mm_credits_button.pos.x, mm_credits_button.pos.y-30);

@@ -203,6 +203,7 @@ function draw(){
     }
     else if(gameState == "game"){
         //take out when lobby select is re-implimented
+        mm_name_input.html.hide();
         mm_start_button.html.hide();
         mm_options_button.html.hide();
         mm_credits_button.html.hide();

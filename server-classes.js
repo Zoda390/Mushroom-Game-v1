@@ -216,7 +216,7 @@ export class ServerMap{
                             this.tile_map[y][x][z] = new ServerTile(1, tempArr[1], tempArr[2]);
                         }
                         else if(tempArr[0] == 2){ //liquid
-                            this.tile_map[y][x][z] = new ServerTile(2, tempArr[1], tempArr[2]);
+                            this.tile_map[y][x][z] = new ServerTile(2, tempArr[1], tempArr[2]); //this might not be working
                         }
                         else if(tempArr[0] == 3){ //entity
                             this.tile_map[y][x][z] = new ServerTileEntity(3, tempArr[1], tempArr[2], tempArr[4], tempArr[5]);
