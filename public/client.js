@@ -4,6 +4,7 @@ var tileSize = 64; //rendered size of tiles
 var player = {x: 0, y: 0, z: 5, hand: 1, id: 0, team: 0, hp: 100, mode: 's'}; //a quickhand for player info
 var ui = {}; //an object that will store comonly used ui variables
 var gameState = "Main_Menu"; //keeps track of what the client is currently doing
+var musicplayer; //holds the html element responsible for playing music
 
 var title_img;
 //create the img_maps
@@ -28,6 +29,8 @@ function preload(){
     item_img_map.push(loadImage("imgs/items/pickaxe.png"));
 
     title_img = loadImage("imgs/title.png");
+
+    musicplayer = new MusicPlayer(['audio/music/copycat.wav']);
 }
 
 function setup(){
@@ -46,7 +49,7 @@ function setup(){
         }
 
         //when you connect send the server a join message
-        channel.emit('join', {x: 0, y: 0, z: 5, id: channel.id});
+        channel.emit('join', {id: channel.id});
 
         //when the server gives you the world data
         channel.on('give_world', data => {
@@ -54,6 +57,16 @@ function setup(){
                 cc_map = new ClientMap("unUpdated", 0, 0);
                 cc_map.name = data.name;
                 cc_map.fromStr(data.str);
+                player.y = floor(random(0, cc_map.tile_map.length-1));
+                player.x = floor(random(0, cc_map.tile_map[player.y].length-1));
+                player.z = 5;
+                if(cc_map.tile_map[player.y][player.x][player.z] !== 0){
+                    for(let i = cc_map.tile_map[player.y][player.x].length; i>player.z; i--){
+                        if(cc_map.tile_map[player.y][player.x][player.z] === 0){
+                            player.z = i;
+                        }
+                    }
+                }
             }
             /*
             else{
@@ -156,6 +169,25 @@ function setup(){
             }
         })
 
+        channel.on('regen', data => {
+            let heal = 0;
+            for(let y = 0; y < cc_map.tile_map.length; y++){
+                for(let x = 0; x < cc_map.tile_map[y].length; x++){
+                    for(let z = 0; z < cc_map.tile_map[y][x].length; z++){
+                        if(cc_map.tile_map[y][x][z] != 0){
+                            if(cc_map.tile_map[y][x][z].hp < 10){
+                                cc_map.tile_map[y][x][z].hp += 1;
+                                heal++;
+                            }
+                        }
+                    }
+                }
+            }
+            if(heal > 0){
+                //console.log('healed ' + heal + ' tiles');
+            }
+        })
+
         channel.on('msg', data => {
             chat_arr.push(data);
             if(chat_arr.length > 12){
@@ -174,6 +206,8 @@ function draw(){
             lobby_select_buttons[i].html.hide();
         }
         credits_back_button.html.hide();
+        pause_quit_button.html.hide();
+        musicSlider.html.hide();
         background(139, 176, 173);
         image(title_img, (width/2)-580, 20);
         r_main_menu_ui();
@@ -210,10 +244,11 @@ function draw(){
 
         lobby_start_button.html.hide();
         lobby_leave_button.html.hide();
+        musicplayer.update();
         background(139, 176, 173);
         if(cc_map != undefined){ //only draw the map if the map exists
             cc_map.render();
-            r_all_ui(["name_plate", "player_info", "chat_box"]);
+            r_all_ui(ui_arr);
             takeInput();
         }
     }
@@ -231,16 +266,19 @@ var slot1_button = 49; //1
 var slot2_button = 50; //2
 var slot3_button = 51; //3
 var slot4_button = 52; //4
+var pause_button = 27; //esc
 
 //waiting stuffs
 var lastbuildMilli = 0;
-var build_wait = 100;
+var build_wait = 400;
 var lastChatMili = 0;
 var last_swap_mili = 0;
 var swap_wait = 150;
+var last_pause_mili = 0;
+var pause_wait = 150;
 
 function takeInput(){
-    if(document.activeElement !== chat_input.elt){
+    if(document.activeElement !== chat_input.elt && !ui_arr.includes('pause_box')){
         if (keyIsDown(move_right_button) && player.x != cc_map.tile_map[0].length-1 && cc_map.tile_map[player.y][player.x+1][player.z] === 0 && cc_map.tile_map[player.y][player.x][player.z].type == "entity") {
             cc_map.tile_map[player.y][player.x][player.z].move(3, channel.id);
         }
@@ -280,32 +318,40 @@ function takeInput(){
         if (keyIsDown(slot4_button)){
             //open big inv
         }
+        if(mouseIsPressed){
+            if(millis() - lastbuildMilli > build_wait){
+                let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
+                let x = player.x + floor(mouseX/tileSize) - 15;
+                let z = -1;
+        
+                if(mouseButton == LEFT){ //left click
+                    if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
+                        cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
+                    }
+                    lastbuildMilli = millis();
+                }
+                else{  //right click
+                    if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
+                        cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
+                    }
+                    lastbuildMilli = millis();
+                }
+            }
+        }
     }
     if (keyIsDown(13) && millis()-lastChatMili > 200){ //enter
         send_chat_msg();
         lastChatMili = millis();
     }
-}
-
-function mouseReleased() {
-    if(gameState == "game" && cc_map !== undefined){
-        if(millis() - lastbuildMilli > build_wait){
-            let y = player.y + floor((mouseY - ((player.z-((player.z%2 == 0)? 1:0)) * 32))/tileSize) - 7 + floor(player.z/2) - ((player.z%2 == 0)? 1:0);
-            let x = player.x + floor(mouseX/tileSize) - 15;
-            let z = -1;
-    
-            if(mouseButton == LEFT){ //left click
-                if(cc_map.tile_map[player.y][player.x][player.z].inv[0] !== undefined){
-                    cc_map.tile_map[player.y][player.x][player.z].inv[0].clicked(x, y, z);
-                }
-                lastbuildMilli = millis();
-            }
-            else{  //right click
-                if(cc_map.tile_map[player.y][player.x][player.z].inv[1] !== undefined){
-                    cc_map.tile_map[player.y][player.x][player.z].inv[1].clicked(x, y, z);
-                }
-                lastbuildMilli = millis();
-            }
+    if (keyIsDown(pause_button) && millis() - last_pause_mili > pause_wait){
+        if(ui_arr.includes('pause_box')){
+            pause_quit_button.html.hide();
+            musicSlider.html.hide();
+            ui_arr.pop();
         }
+        else{
+            ui_arr.push('pause_box');
+        }
+        last_pause_mili = millis();
     }
 }

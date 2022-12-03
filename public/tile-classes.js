@@ -178,7 +178,6 @@ class ClientTileEntity extends ClientTileFacing{ //an entity tile
                 tempArr[i] = parseInt(tempArr[i]);
             }
         }
-        console.log(tempArr);
         let temp_item = new ClientItem(item_type_map[tempArr[0]], item_name_map[tempArr[1]], tempArr[2], '');
         let given = false;
         if(cc_map.tile_map[player.y][player.x][player.z].inv.length === 0){

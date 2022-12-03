@@ -38,7 +38,7 @@ item_name_map = [0, 'stone', 'grass', 'water', 'wood', 'pickaxe'];
 
 //create the curent server map
 var cs_map = new ServerMap('unUpdated', 0, 0); //curent server map
-//cs_map.fromtxt("map.txt");
+cs_map.fromtxt("map.txt");
 cs_map.save();
 
 
@@ -53,7 +53,9 @@ io.onConnection(channel => {
     channel.on('join', data => { //client join message
         //convert the map to a string and send it to the player
         io.room(channel.roomId).emit('give_world', {str: cs_map.totxt(), name: cs_map.name});
-        
+    })
+
+    channel.on('start', data => {
         //add a player to the map
         cs_map.tile_map[data.y][data.x][data.z] = new ServerTileEntity(find_in_array("entity", tile_type_map), find_in_array("player", tile_name_map), 100, (player_count%2), 0);
         cs_map.tile_map[data.y][data.x][data.z].id = data.id;
@@ -61,6 +63,8 @@ io.onConnection(channel => {
         cs_map.tile_map[data.y][data.x][data.z].inv[1] = new ServerItem(1, 4, 10, '');
         io.room(channel.roomId).emit('change', {x: data.x, y: data.y, z: data.z, to: cs_map.tile_map[data.y][data.x][data.z].toStr()});
         player_count++;
+        chat_arr.push({team: 0, txt: data.username + ' has joined'});
+        io.room(channel.roomId).emit('msg', {team: -1, txt: data.username + ' has joined'});
     })
 
     channel.on('change', data => { //change a block data = {x:int, y:int, z:int, to:str}
@@ -149,6 +153,28 @@ io.onConnection(channel => {
             }
         }
     })
+
+    setInterval(tile_regen, 7000);
+
+    function tile_regen(){
+        let heal = 0;
+        for(let y = 0; y < cs_map.tile_map.length; y++){
+            for(let x = 0; x < cs_map.tile_map[y].length; x++){
+                for(let z = 0; z < cs_map.tile_map[y][x].length; z++){
+                    if(cs_map.tile_map[y][x][z] != 0){
+                        if(cs_map.tile_map[y][x][z].hp < 10){
+                            cs_map.tile_map[y][x][z].hp += 1;
+                            heal++;
+                        }
+                    }
+                }
+            }
+        }
+        if(heal > 0){
+            //console.log('healed ' + heal + ' tiles');
+        }
+        io.room(channel.roomId).emit('regen', {});
+    }
 
     channel.on('msg', data => {
         chat_arr.push(data);

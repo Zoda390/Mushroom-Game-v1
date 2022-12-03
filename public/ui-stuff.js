@@ -1,4 +1,4 @@
-
+var ui_arr = ["name_plate", "player_info", "chat_box"];
 function r_all_ui(arr){
     for(let i = 0; i < arr.length; i++){
         if(arr[i] == "name_plate"){
@@ -12,6 +12,9 @@ function r_all_ui(arr){
         }
         else if(arr[i] == "chat_box"){
             r_chat_ui(chat_arr, cc_map.tile_map[player.y][player.x][player.z].team);
+        }
+        else if(arr[i] == "pause_box"){
+            r_pause_ui();
         }
         else{
             console.log("UI type not recognized, " + arr[i]);
@@ -45,6 +48,7 @@ function setup_ui(){
     s_lobby_select();
     s_lobby();
     s_credits();
+    s_pause_ui();
 }
 
 function r_name_ui(name, team){
@@ -256,8 +260,8 @@ var mm_start_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_options_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 var mm_credits_button = {html: 0, pos:0, size: {x: 400, y: 100}};
 function s_main_menu_ui(){
-    mm_name_input.pos = {x: width/2, y: (height/2)+100};
-    mm_start_button.pos = {x: width/2, y: (height/2)+170};
+    mm_name_input.pos = {x: width/2, y: (height/2)+170}; //100
+    mm_start_button.pos = {x: width/2, y: (height/2)+280}; //170
     mm_options_button.pos = {x: width/2, y: (height/2)+280};
     mm_credits_button.pos = {x: width/2, y: (height/2)+390};
 
@@ -289,7 +293,13 @@ function s_main_menu_ui(){
     mm_credits_button.html.style('background-color', '#ffffff00');
 
     mm_name_input.html.input(update_name_input);
-    mm_start_button.html.mousePressed(()=>{if(username.length >= 1){gameState = "game";}});
+    mm_start_button.html.mousePressed(()=>{
+        if(username.length >= 1){
+            channel.emit('start', {x: player.x, y: player.y, z: player.z, id: channel.id, username: username});
+            gameState = "game";
+            musicplayer.play();
+        }
+    });
     mm_options_button.html.mousePressed(()=>{});//add options to the ui list
     mm_credits_button.html.mousePressed(()=>{gameState = "Credits";});
 
@@ -312,27 +322,29 @@ function update_name_input(){
 function r_main_menu_ui(){
     mm_name_input.html.show();
     mm_start_button.html.show();
-    mm_options_button.html.show();
+    //mm_options_button.html.show();
     mm_credits_button.html.show();
     push();
     stroke(ui.black);
     strokeWeight(ui.s_size);
     fill(ui.gray1);
     rect(mm_start_button.pos.x - (mm_start_button.size.x/2), mm_start_button.pos.y - (mm_start_button.size.y/2)- 30, mm_start_button.size.x, mm_start_button.size.y);
-    rect(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2)- 30, mm_options_button.size.x, mm_options_button.size.y);
+    //rect(mm_options_button.pos.x - (mm_options_button.size.x/2), mm_options_button.pos.y - (mm_options_button.size.y/2)- 30, mm_options_button.size.x, mm_options_button.size.y);
     rect(mm_credits_button.pos.x - (mm_credits_button.size.x/2), mm_credits_button.pos.y - (mm_credits_button.size.y/2)- 30, mm_credits_button.size.x, mm_credits_button.size.y);
     if(document.activeElement === mm_name_input.html.elt){
         stroke(ui.white);
     }
     rect(mm_name_input.pos.x - (mm_name_input.size.x/2), mm_name_input.pos.y - mm_name_input.size.y- 30, mm_name_input.size.x, mm_name_input.size.y);
     textSize(ui.t_size);
-    stroke(ui.black);
     strokeWeight(ui.ts_size);
+    stroke(ui.black);
     fill(ui.white);
     textAlign(CENTER, CENTER);
     text(username, mm_name_input.pos.x, mm_name_input.pos.y-52.5);
+    textSize(ui.t_size*2);
+    strokeWeight(ui.ts_size*2);
     text(mm_start_button.html.elt.innerText, mm_start_button.pos.x, mm_start_button.pos.y-30);
-    text(mm_options_button.html.elt.innerText, mm_options_button.pos.x, mm_options_button.pos.y-30);
+    //text(mm_options_button.html.elt.innerText, mm_options_button.pos.x, mm_options_button.pos.y-30);
     text(mm_credits_button.html.elt.innerText, mm_credits_button.pos.x, mm_credits_button.pos.y-30);
     pop();
 }
@@ -462,5 +474,69 @@ function r_credits(){
     text('Music Help: Christian Rodriguez', (width/2), (((height-250)/5)*5)+50);
     textSize(ui.t_size);
     text(credits_back_button.html.elt.innerText, credits_back_button.pos.x, credits_back_button.pos.y-30);
+    pop();
+}
+
+var pause_quit_button = {html: 0, pos: 0, size: {x: 400, y: 100}};
+var musicSlider = {html: 0, pos: 0, size: 300};
+function s_pause_ui(){
+    pause_quit_button.pos = {x: width/2, y: height-260};
+    musicSlider.pos = {x: (width/2) + 50, y: (height/2)-200};
+
+    pause_quit_button.html = createButton("Quit");
+    musicSlider.html = createSlider(0, 1, 0.5, 0.01);
+
+    pause_quit_button.html.position(pause_quit_button.pos.x - (pause_quit_button.size.x/2), pause_quit_button.pos.y - (pause_quit_button.size.y/2));
+    musicSlider.html.position(musicSlider.pos.x, musicSlider.pos.y);
+
+    pause_quit_button.html.size(pause_quit_button.size.x, pause_quit_button.size.y);
+    musicSlider.html.size(musicSlider.size);
+
+    pause_quit_button.html.style('color', '#ffffff00');
+    pause_quit_button.html.style('background-color', '#ffffff00');
+    pause_quit_button.html.mousePressed(()=>{
+        gameState = "Main_Menu";
+        channel.emit('change', {x: player.x, y: player.y, z: player.z, to: 0});
+        player.y = floor(random(0, cc_map.tile_map.length-1));
+        player.x = floor(random(0, cc_map.tile_map[player.y].length-1));
+        player.z = 5;
+        if(cc_map.tile_map[player.y][player.x][player.z] !== 0){
+            for(let i = cc_map.tile_map[player.y][player.x].length; i>player.z; i--){
+                if(cc_map.tile_map[player.y][player.x][player.z] === 0){
+                    player.z = i;
+                }
+            }
+        }
+        ui_arr.pop();
+        musicplayer.stop();
+    });
+    musicSlider.html.input(musicplayer.update_vol);
+    pause_quit_button.html.hide();
+    musicSlider.html.hide();
+}
+
+function r_pause_ui(){
+    let w = 800;
+    let h = 600;
+    let x = (player.x*tileSize) - (w/2);
+    let y = (player.y*tileSize) - ((player.z-1)*(tileSize/2)) - (h*(2/3));
+    pause_quit_button.html.show();
+    musicSlider.html.show();
+    push();
+    strokeWeight(ui.s_size);
+    stroke(ui.brown2);
+    fill(ui.brown1);
+    rect(x, y, w, h);
+    stroke(ui.black);
+    fill(ui.gray1);
+    rect(x+200, y+475, pause_quit_button.size.x, pause_quit_button.size.y);
+    stroke(ui.black);
+    strokeWeight(ui.ts_size*2);
+    fill(ui.white);
+    textAlign(CENTER, CENTER);
+    textSize(ui.t_size*2);
+    text(pause_quit_button.html.elt.innerText, x+200+(pause_quit_button.size.x/2), y+475+(pause_quit_button.size.y/2));
+    text('Paused', x+400, y+50);
+    text('Music Volume:', x+200, y+145);
     pop();
 }

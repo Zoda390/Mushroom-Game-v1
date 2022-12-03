@@ -203,7 +203,7 @@ export class ServerMap{
             for(let x = 0; x < xcount; x++){
                 this.tile_map[y][x] = [];
                 for(let z = 0; z < temp_tile_map.length; z++){
-                    if(temp_tile_map[z][y][x] !== "0"){
+                    if(temp_tile_map[z][y][x] !== "0" && temp_tile_map[z][y][x] !== 0){
                         let tempArr = temp_tile_map[z][y][x].split('.');
                         for(let i = 0; i < tempArr.length; i++){
                             if(parseInt(tempArr[i])+"" == tempArr[i]){
